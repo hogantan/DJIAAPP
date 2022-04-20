@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/colorPrimary"
+    tools:context=".activities.VideoActivity">
+
+    <TextureView
+        android:id="@+id/primaryVideoFeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.041"
+        app:srcCompat="@drawable/ic_baseline_control_camera_24" />
+
+    <ToggleButton
+        android:id="@+id/chaseBtn"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/chase_btn"
+        android:textOff=""
+        android:textOn=""
+        app:layout_constraintEnd_toEndOf="@+id/land_btn"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/land_btn"
+        app:layout_constraintTop_toBottomOf="@+id/land_btn" />
+
+    <Button
+        android:id="@+id/settingsBtn"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:background="@drawable/ic_baseline_settings_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.96" />
+
+    <com.dji.djiaapp2.utils.OnScreenJoystick
+        android:id="@+id/joystickLeft"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="28dp"
+        android:visibility="invisible"
+        android:background="@mipmap/joystick"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.959" />
+
+    <com.dji.djiaapp2.utils.OnScreenJoystick
+        android:id="@+id/joystickRight"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginEnd="28dp"
+        android:visibility="invisible"
+        android:background="@mipmap/joystick"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/primaryVideoFeed"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.959" />
+
+    <ToggleButton
+        android:id="@+id/toggleLayoutBtn"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:visibility="invisible"
+        android:textOff=""
+        android:textOn=""
+        android:background="@drawable/togglelayout"
+        app:layout_constraintBottom_toBottomOf="@+id/primaryVideoFeed"
+        app:layout_constraintEnd_toEndOf="@+id/primaryVideoFeed"
+        app:layout_constraintStart_toStartOf="@+id/primaryVideoFeed" />
+
+    <Button
+        android:id="@+id/land_btn"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/land_btn"
+        app:layout_constraintEnd_toEndOf="@+id/screenmirror_btn"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/screenmirror_btn"
+        app:layout_constraintTop_toBottomOf="@+id/screenmirror_btn" />
+
+    <ToggleButton
+        android:id="@+id/toggleUIBtn"
+        android:layout_width="564dp"
+        android:layout_height="255dp"
+        android:background="@android:color/transparent"
+        android:textOff=""
+        android:textOn=""
+        app:layout_constraintBottom_toBottomOf="@+id/primaryVideoFeed"
+        app:layout_constraintEnd_toEndOf="@+id/primaryVideoFeed"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="@+id/primaryVideoFeed"
+        app:layout_constraintTop_toTopOf="@+id/primaryVideoFeed"
+        app:layout_constraintVertical_bias="0.275" />
+
+    <Button
+        android:id="@+id/screenmirror_btn"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:background="@drawable/startmirror_btn"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/primaryVideoFeed"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.184" />
+
+    <Button
+        android:id="@+id/startrtmp_btn"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/start_rtmp_btn"
+        app:layout_constraintEnd_toEndOf="@+id/chaseBtn"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/chaseBtn"
+        app:layout_constraintTop_toBottomOf="@+id/chaseBtn" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

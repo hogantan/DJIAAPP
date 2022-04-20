@@ -1,0 +1,106 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+
+repositories {
+    maven { url 'https://jitpack.io' }
+    mavenLocal()
+    mavenCentral()
+}
+
+android {
+    compileSdkVersion 32
+    buildToolsVersion '30.0.3'
+    useLibrary 'org.apache.http.legacy'
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 32
+        multiDexEnabled true
+        ndk {
+            // On x86 devices that run Android API 23 or above, if the application is targeted with API 23 or
+            // above, FFmpeg lib might lead to runtime crashes or warnings.
+            abiFilters 'armeabi-v7a', 'arm64-v8a'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            shrinkResources true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
+
+    packagingOptions {
+        doNotStrip "*/*/libdjivideo.so"
+        doNotStrip "*/*/libSDKRelativeJNI.so"
+        doNotStrip "*/*/libFlyForbid.so"
+        doNotStrip "*/*/libduml_vision_bokeh.so"
+        doNotStrip "*/*/libyuv2.so"
+        doNotStrip "*/*/libGroudStation.so"
+        doNotStrip "*/*/libFRCorkscrew.so"
+        doNotStrip "*/*/libUpgradeVerify.so"
+        doNotStrip "*/*/libFR.so"
+        doNotStrip "*/*/libDJIFlySafeCore.so"
+        doNotStrip "*/*/libdjifs_jni.so"
+        doNotStrip "*/*/libsfjni.so"
+        doNotStrip "*/*/libDJICommonJNI.so"
+        doNotStrip "*/*/libDJICSDKCommon.so"
+        doNotStrip "*/*/libDJIUpgradeCore.so"
+        doNotStrip "*/*/libDJIUpgradeJNI.so"
+        doNotStrip "*/*/libDJIWaypointV2Core.so"
+        doNotStrip "*/*/libAMapSDK_MAP_v6_9_2.so"
+        doNotStrip "*/*/libDJIMOP.so"
+        doNotStrip "*/*/libDJISDKLOGJNI.so"
+        exclude 'META-INF/rxjava.properties'
+        exclude 'assets/location_map_gps_locked.png'
+        exclude 'assets/location_map_gps_3d.png'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildFeatures {
+        viewBinding true
+    }
+}
+
+
+dependencies {
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation 'com.squareup:otto:1.3.8'
+    implementation('com.dji:dji-sdk:4.15', {
+        /**
+         * Uncomment the "library-anti-distortion" if your app does not need Anti Distortion for Mavic 2 Pro and Mavic 2 Zoom.
+         * Uncomment the "fly-safe-database" if you need database for release, or we will download it when DJISDKManager.getInstance().registerApp
+         * is called.
+         * Both will greatly reducing the size of the APK.
+         */
+        exclude module: 'library-anti-distortion'
+        //exclude module: 'fly-safe-database'
+    })
+    implementation 'com.google.android.material:material:1.5.0'
+    implementation 'androidx.navigation:navigation-fragment:2.4.2'
+    implementation 'androidx.navigation:navigation-ui:2.4.2'
+    implementation 'org.zeromq:jeromq:0.5.2'
+    implementation 'com.github.pedroSG94.rtmp-rtsp-stream-client-java:rtplibrary:2.1.7'
+    compileOnly 'com.dji:dji-sdk-provided:4.15'
+
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.core:core:1.3.2'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation 'androidx.annotation:annotation:1.2.0'
+    implementation "androidx.documentfile:documentfile:1.0.1"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}

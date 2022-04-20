@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item>
+        <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+            <solid android:color="@color/zxing_transparent"/>
+            <stroke android:color="@color/zxing_transparent" android:width="0.5dp"/>
+            <corners android:radius="30dp"></corners>
+        </shape>
+    </item>
+    <item android:drawable="@drawable/ic_baseline_keyboard_arrow_up_24" />
+</layer-list>

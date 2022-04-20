@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/colorPrimary"
+    tools:context=".activities.ConnectionActivityNew">
+
+    <TextView
+        android:id="@+id/sdk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/allerta"
+        android:text="SDK Registration:"
+        android:textColor="@color/colorOffWhite"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.462"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/waypointFilename"
+        app:layout_constraintVertical_bias="0.144" />
+
+    <TextView
+        android:id="@+id/model"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:fontFamily="@font/allerta"
+        android:text="Drone:"
+        android:textColor="@color/colorOffWhite"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/status"
+        app:layout_constraintTop_toBottomOf="@+id/status" />
+
+    <ImageView
+        android:id="@+id/sdkStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/sdk"
+        app:layout_constraintEnd_toEndOf="@+id/waypointFilename"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/sdk"
+        app:layout_constraintTop_toTopOf="@+id/sdk"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/ic_baseline_cancel_24" />
+
+    <ImageView
+        android:id="@+id/connectionStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/status"
+        app:layout_constraintEnd_toEndOf="@+id/sdkStatus"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/status"
+        app:layout_constraintTop_toTopOf="@+id/status"
+        app:srcCompat="@drawable/ic_baseline_cancel_24" />
+
+    <TextView
+        android:id="@+id/status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:fontFamily="@font/allerta"
+        android:text="Connection Status:"
+        android:textColor="@color/colorOffWhite"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/sdk"
+        app:layout_constraintTop_toBottomOf="@+id/sdk" />
+
+    <TextView
+        android:id="@+id/drone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/allerta"
+        android:text=" Not Detected"
+        android:textColor="#BA1919"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/model"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.11"
+        app:layout_constraintStart_toEndOf="@+id/model"
+        app:layout_constraintTop_toTopOf="@+id/model" />
+
+    <TextView
+        android:id="@+id/waypointFilename"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/electrolize"
+        android:text="DJIAAPP"
+        android:textAlignment="viewStart"
+        android:textColor="@color/colorSecondary"
+        android:textSize="48sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.505"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.186" />
+
+    <ProgressBar
+        android:id="@+id/loadingBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/colorOffWhite"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.519"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/model"
+        app:layout_constraintVertical_bias="0.448" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

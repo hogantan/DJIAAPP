@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android" android:color="@color/colorTap">
+    <item android:id="@android:id/mask">
+        <shape android:shape="oval">
+            <corners android:radius="3dp"/>
+            <solid android:color="@color/colorSecondary"/>
+        </shape>
+    </item>
+    <item>
+        <selector xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:drawable="@drawable/togglelayout_checked" android:state_checked="true"/>
+            <item android:drawable="@drawable/togglelayout_unchecked" android:state_checked="false"/>
+        </selector>
+    </item>
+</ripple>

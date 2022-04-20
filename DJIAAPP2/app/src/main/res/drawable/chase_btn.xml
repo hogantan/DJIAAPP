@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android" android:color="@color/colorTap">
+<item>
+    <selector xmlns:android="http://schemas.android.com/apk/res/android">
+        <item android:drawable="@drawable/chase_btn_checked" android:state_checked="true"/>
+        <item android:drawable="@drawable/chase_btn_unchecked" android:state_checked="false"/>
+    </selector>
+</item>
+</ripple>

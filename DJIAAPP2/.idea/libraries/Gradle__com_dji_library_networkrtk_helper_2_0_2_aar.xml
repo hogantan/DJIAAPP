@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.dji:library-networkrtk-helper:2.0.2@aar">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/879b793d9227faa3624a9f807f92a23a/transformed/jetified-library-networkrtk-helper-2.0.2/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/879b793d9227faa3624a9f807f92a23a/transformed/jetified-library-networkrtk-helper-2.0.2/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/879b793d9227faa3624a9f807f92a23a/transformed/jetified-library-networkrtk-helper-2.0.2/jars/libs/wz-rtcm-2.0.2-release.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/879b793d9227faa3624a9f807f92a23a/transformed/jetified-library-networkrtk-helper-2.0.2/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

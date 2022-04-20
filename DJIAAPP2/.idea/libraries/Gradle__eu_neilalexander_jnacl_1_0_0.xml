@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Gradle: eu.neilalexander:jnacl:1.0.0">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/eu.neilalexander/jnacl/1.0.0/82e9034fb81a33cb9d7e0c4cd241a2ba84802ae2/jnacl-1.0.0.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/eu.neilalexander/jnacl/1.0.0/701f4230b09b1a9030469d0850c18736b5889019/jnacl-1.0.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/eu.neilalexander/jnacl/1.0.0/79c84417c0c36273b5c6b30ab05a0494dc81c473/jnacl-1.0.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
