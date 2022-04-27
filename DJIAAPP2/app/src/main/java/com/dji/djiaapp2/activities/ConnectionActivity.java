@@ -28,7 +28,7 @@ import com.dji.djiaapp2.viewmodels.ConnectionViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConnectionActivityNew extends AppCompatActivity {
+public class ConnectionActivity extends AppCompatActivity {
 
     private static final String[] REQUIRED_PERMISSION_LIST = new String[]{
             Manifest.permission.BLUETOOTH,
@@ -68,7 +68,7 @@ public class ConnectionActivityNew extends AppCompatActivity {
             getWindow().setExitTransition(new Fade());
         }
 
-        setContentView(R.layout.activity_connection_new);
+        setContentView(R.layout.activity_connection);
         initUI();
         subscribeToViewModel();
         connectionViewModel.startRegistration(getApplicationContext());

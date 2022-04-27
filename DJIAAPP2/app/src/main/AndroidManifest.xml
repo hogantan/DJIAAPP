@@ -52,7 +52,7 @@
         <service android:name="dji.sdk.sdkmanager.DJIGlobalService" >
         </service> <!-- DJI SDK -->
         <activity
-            android:name="com.dji.djiaapp2.activities.ConnectionActivityNew"
+            android:name="com.dji.djiaapp2.activities.ConnectionActivity"
             android:configChanges="orientation"
             android:screenOrientation="landscape"
             android:exported="true">
