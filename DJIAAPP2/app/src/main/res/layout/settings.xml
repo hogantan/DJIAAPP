@@ -7,13 +7,13 @@
     android:gravity="center_horizontal"
     android:orientation="vertical">
 
-
     <EditText
         android:id="@+id/controllerIP"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="top"
-        android:hint="Enter Controller IP Address                                   "
+        android:textSize="14sp"
+        android:hint="Enter Controller IP Address (e.g. 127.0.0.1)                           "
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -24,7 +24,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:gravity="top"
-        android:hint="Enter RTSP Server Address                                   "
+        android:textSize="14sp"
+        android:hint="Enter RTSP Server Address (e.g. rtsp://127.0.0.1:8554/test)    "
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.592"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,7 +36,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:gravity="top"
-        android:hint="Enter RTMP Server Address                                   "
+        android:textSize="14sp"
+        android:hint="Enter RTMP Server Address                                                           "
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.592"
         app:layout_constraintStart_toStartOf="parent"

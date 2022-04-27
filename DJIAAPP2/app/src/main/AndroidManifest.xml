@@ -44,7 +44,7 @@
 
         <meta-data
             android:name="com.dji.sdk.API_KEY"
-            android:value="403b151744917a6f6da8984a" />
+            android:value="be98a4e78f4e84eae209e74f" />
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
@@ -69,10 +69,6 @@
                 android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
                 android:resource="@xml/accessory_filter" />
         </activity>
-        <activity
-            android:name="com.dji.djiaapp2.activities.MainActivity"
-            android:screenOrientation="landscape"
-            android:exported="true"/>
         <activity
             android:name="com.dji.djiaapp2.activities.HomeActivity"
             android:exported="true"

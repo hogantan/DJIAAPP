@@ -6,6 +6,7 @@ import static com.dji.djiaapp2.utils.AppConfiguration.DRONE_MODE_SEARCH;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -19,10 +20,12 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.TextureView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -194,7 +197,6 @@ public class VideoActivity extends AppCompatActivity
         Log.e(TAG, "onSurfaceTextureAvailable");
         if (mCodecManager == null) {
             mCodecManager = new DJICodecManager(this, surface, width, height);
-            toggleLayoutBtn.setVisibility(View.INVISIBLE);
             initScreenMirror();
         }
     }
@@ -268,6 +270,16 @@ public class VideoActivity extends AppCompatActivity
             public void onClick(View view) {
                 final View settings = LayoutInflater.from(VideoActivity.this).inflate(R.layout.settings, null);
                 AlertDialog.Builder alert = new AlertDialog.Builder(VideoActivity.this, R.style.AlertDialogCustom);
+                alert.setCancelable(false);
+                settings.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View view, MotionEvent motionEvent) {
+                        InputMethodManager imm = (InputMethodManager) getBaseContext().getSystemService(Context
+                                .INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(settings.getWindowToken(), 0);
+                        return true;
+                    }
+                });
                 final EditText controllerIP = settings.findViewById(R.id.controllerIP);
                 final EditText screenMirrorAddr = settings.findViewById(R.id.screenMirroRtspServer);
                 final EditText RTMPAddr = settings.findViewById(R.id.RTMPUrl);
@@ -302,11 +314,13 @@ public class VideoActivity extends AppCompatActivity
                     joystickLeft.setVisibility(View.VISIBLE);
                     chaseBtn.setVisibility(View.INVISIBLE);
                     settingsBtn.setVisibility(View.INVISIBLE);
+                    mirrorScreenBtn.setVisibility(View.INVISIBLE);
+                    landBtn.setVisibility(View.INVISIBLE);
+                    startRTMPBtn.setVisibility(View.INVISIBLE);
 
-                    landBtn.setAlpha(0);
+
                     joystickRight.setAlpha(0);
                     joystickLeft.setAlpha(0);
-                    landBtn.animate().alpha(1.0f).setDuration(1000).start();
                     joystickRight.animate().alpha(1.0f).setDuration(1000).start();
                     joystickLeft.animate().alpha(1.0f).setDuration(1000).start();
 
@@ -316,10 +330,11 @@ public class VideoActivity extends AppCompatActivity
                     joystickLeft.setVisibility(View.INVISIBLE);
                     chaseBtn.setVisibility(View.VISIBLE);
                     settingsBtn.setVisibility(View.VISIBLE);
+                    mirrorScreenBtn.setVisibility(View.VISIBLE);
+                    landBtn.setVisibility(View.VISIBLE);
+                    startRTMPBtn.setVisibility(View.VISIBLE);
 
-                    chaseBtn.setAlpha(0);
                     settingsBtn.setAlpha(0);
-                    chaseBtn.animate().alpha(1.0f).setDuration(1000).start();
                     settingsBtn.animate().alpha(1.0f).setDuration(1000).start();
                 }
             }
@@ -344,6 +359,11 @@ public class VideoActivity extends AppCompatActivity
         Intent intent = new Intent();
         intent.putExtra("reset", "true");
         setResult(RESULT_OK, intent);
+        DisplayService displayService = videoViewModel.getDisplayService();
+        if (displayService.isStreaming()) {
+            displayService.stopStream();
+        }
+        videoViewModel.stopRTMP();
     }
 
     private void subscribeToViewModel() {
@@ -367,7 +387,7 @@ public class VideoActivity extends AppCompatActivity
         if (data != null && (requestCode == REQUEST_CODE_STREAM
                 || requestCode == REQUEST_CODE_RECORD && resultCode == Activity.RESULT_OK)) {
             videoViewModel.startScreenMirror(AppConfiguration.SCREEN_MIRROR_RTSP_SERVER_ADDR
-                    , resultCode, data, 1920, getOutputWidth());
+                    , resultCode, data, 1920, getOutputHeight());
         }
     }
 
@@ -412,6 +432,7 @@ public class VideoActivity extends AppCompatActivity
         toggleLayoutBtn.setVisibility(View.INVISIBLE);
         mirrorScreenBtn.setVisibility(View.INVISIBLE);
         startRTMPBtn.setVisibility(View.INVISIBLE);
+        toggleLayoutBtn.setVisibility(View.INVISIBLE);
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
@@ -426,9 +447,17 @@ public class VideoActivity extends AppCompatActivity
         toggleLayoutBtn.setVisibility(View.VISIBLE);
         mirrorScreenBtn.setVisibility(View.VISIBLE);
         startRTMPBtn.setVisibility(View.VISIBLE);
+        toggleLayoutBtn.setVisibility(View.VISIBLE);
         if (getSupportActionBar() != null) {
             getSupportActionBar().show();
         }
+        showSystemBars();
+    }
+
+    private void showSystemBars() {
+        View decorView = getWindow().getDecorView();
+        // Show the status bar.
+        decorView.setSystemUiVisibility(View.VISIBLE);
     }
 
     private void hideSystemBars() {
@@ -455,7 +484,7 @@ public class VideoActivity extends AppCompatActivity
         return metrics.y;
     }
 
-    private int getOutputWidth() {
+    private int getOutputHeight() {
         float ratio = (float) getScreenWidth()/getScreenHeight();
         return (int) (1920 / ratio);
     }

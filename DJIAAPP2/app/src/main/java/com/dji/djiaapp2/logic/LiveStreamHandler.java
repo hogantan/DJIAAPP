@@ -8,6 +8,9 @@ import dji.sdk.camera.VideoFeeder;
 import dji.sdk.sdkmanager.DJISDKManager;
 import dji.sdk.sdkmanager.LiveStreamManager;
 
+/**
+ * This is for using DJI inbuilt RTMP live streaming
+ */
 public class LiveStreamHandler {
 
     private LiveStreamManager liveStreamManager;
@@ -24,9 +27,17 @@ public class LiveStreamHandler {
     }
 
     public void startStream() {
-        if (AppConfiguration.RTMPUrl != "") {
+        if (AppConfiguration.RTMPUrl != "" && !liveStreamManager.isStreaming()) {
             liveStreamManager.setLiveUrl(AppConfiguration.RTMPUrl);
             liveStreamManager.startStream();
+        } else {
+            liveStreamManager.stopStream();
+        }
+    }
+
+    public void stopStream() {
+        if (liveStreamManager.isStreaming()) {
+            liveStreamManager.stopStream();
         }
     }
 

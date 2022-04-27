@@ -13,6 +13,10 @@ import dji.sdk.base.BaseProduct;
 import dji.sdk.gimbal.Gimbal;
 import dji.sdk.products.Aircraft;
 
+/**
+ * For handling anything related to drone gimbal
+ */
+
 public class GimbalHandler {
 
     private Gimbal gimbal;

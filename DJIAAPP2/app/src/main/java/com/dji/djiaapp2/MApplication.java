@@ -10,7 +10,6 @@ import dji.sdk.sdkmanager.DJISDKManager;
 
 public class MApplication extends Application {
 
-    private FPVDemoApplication fpvDemoApplication;
     private static BaseProduct mProduct;
 
     @Override

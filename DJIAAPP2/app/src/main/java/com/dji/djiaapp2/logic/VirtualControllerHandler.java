@@ -12,14 +12,21 @@ import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import dji.common.error.DJIError;
 import dji.common.flightcontroller.virtualstick.FlightControlData;
 import dji.common.flightcontroller.virtualstick.FlightCoordinateSystem;
 import dji.common.flightcontroller.virtualstick.RollPitchControlMode;
 import dji.common.flightcontroller.virtualstick.VerticalControlMode;
 import dji.common.flightcontroller.virtualstick.YawControlMode;
+import dji.common.util.CommonCallbacks;
 import dji.sdk.base.BaseProduct;
 import dji.sdk.flightcontroller.FlightController;
 import dji.sdk.products.Aircraft;
+import dji.sdk.sdkmanager.DJISDKManager;
+
+/**
+ * For handling virtual manual control of drone (virtual joystick logic)
+ */
 
 public class VirtualControllerHandler {
 
@@ -27,12 +34,10 @@ public class VirtualControllerHandler {
     private Timer mSendVirtualStickDataTimer;
     private SendVirtualStickDataTask mSendVirtualStickDataTask;
 
-    float pitchJoyControlMaxSpeed = 10;
-    float rollJoyControlMaxSpeed = 10;
+    float pitchJoyControlMaxSpeed = 7;
+    float rollJoyControlMaxSpeed = 7;
     float verticalJoyControlMaxSpeed = 2;
     float yawJoyControlMaxSpeed = 30;
-
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
 
     public VirtualControllerHandler(boolean isOnMission) {
         BaseProduct product = MApplication.getProductInstance();
@@ -44,6 +49,7 @@ public class VirtualControllerHandler {
                 this.flightController.setYawControlMode(YawControlMode.ANGULAR_VELOCITY);
                 this.flightController.setVerticalControlMode(VerticalControlMode.VELOCITY);
                 this.flightController.setRollPitchCoordinateSystem(FlightCoordinateSystem.BODY);
+                this.flightController.setVirtualStickAdvancedModeEnabled(true);
                 this.enable(true);
 
                 if (!isOnMission) {
@@ -75,11 +81,6 @@ public class VirtualControllerHandler {
         Drone.getInstance().setmPitch(pX * pitchJoyControlMaxSpeed);
         Drone.getInstance().setmRoll(pY * rollJoyControlMaxSpeed);
 
-        float p = Drone.getInstance().getmPitch();
-        float r = Drone.getInstance().getmRoll();
-        float w = Drone.getInstance().getmYaw();
-        float t = Drone.getInstance().getmThrottle();
-
         if (null == mSendVirtualStickDataTimer) {
             mSendVirtualStickDataTask = new SendVirtualStickDataTask();
             mSendVirtualStickDataTimer = new Timer();
@@ -97,12 +98,6 @@ public class VirtualControllerHandler {
         Drone.getInstance().setmYaw(pX * yawJoyControlMaxSpeed);
         Drone.getInstance().setmThrottle(pY * verticalJoyControlMaxSpeed);
 
-        float p = Drone.getInstance().getmPitch();
-        float r = Drone.getInstance().getmRoll();
-        float w = Drone.getInstance().getmYaw();
-        float t = Drone.getInstance().getmThrottle();
-
-
         if (null == mSendVirtualStickDataTimer) {
             mSendVirtualStickDataTask = new SendVirtualStickDataTask();
             mSendVirtualStickDataTimer = new Timer();
@@ -114,18 +109,20 @@ public class VirtualControllerHandler {
         Drone.getInstance().setmPitch(x * pitchJoyControlMaxSpeed);
         Drone.getInstance().setmRoll(y * rollJoyControlMaxSpeed);
 
-        float p = Drone.getInstance().getmPitch();
-        float r = Drone.getInstance().getmRoll();
-        float w = Drone.getInstance().getmYaw();
-        float t = Drone.getInstance().getmThrottle();
-
-        flightController.sendVirtualStickFlightControlData(new FlightControlData(p, r, w, t), djiError -> { });
-
+        if (null == mSendVirtualStickDataTimer) {
+            mSendVirtualStickDataTask = new SendVirtualStickDataTask();
+            mSendVirtualStickDataTimer = new Timer();
+            mSendVirtualStickDataTimer.schedule(mSendVirtualStickDataTask, 0, 200);
+        }
     }
 
     public void stopMoving() {
         Drone.getInstance().setAxes(0, 0 ,0 ,0);
-        flightController.sendVirtualStickFlightControlData(new FlightControlData(0, 0, 0, 0), djiError -> { });
+        if (null == mSendVirtualStickDataTimer) {
+            mSendVirtualStickDataTask = new SendVirtualStickDataTask();
+            mSendVirtualStickDataTimer = new Timer();
+            mSendVirtualStickDataTimer.schedule(mSendVirtualStickDataTask, 0, 200);
+        }
     }
 
     public void startLand() {

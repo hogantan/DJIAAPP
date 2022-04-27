@@ -200,4 +200,8 @@ public class VideoViewModel extends AndroidViewModel {
     public void startRTMP() {
         liveStreamHandler.startStream();
     }
+
+    public void stopRTMP() {
+        liveStreamHandler.stopStream();
+    }
 }
