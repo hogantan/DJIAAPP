@@ -10,6 +10,8 @@ import dji.sdk.sdkmanager.LiveStreamManager;
 
 /**
  * This is for using DJI inbuilt RTMP live streaming
+ * Requires internet connection on Android device as DJI Livestream SDK
+ * requires internet
  */
 public class LiveStreamHandler {
 
@@ -21,7 +23,6 @@ public class LiveStreamHandler {
         feed.addVideoDataListener(listener);
         liveStreamManager.setAudioStreamingEnabled(false);
         liveStreamManager.setVideoEncodingEnabled(false);
-        DJISDKManager.getInstance().getProduct().getCamera().setHDLiveViewEnabled(true, djiError -> { });
         liveStreamManager.setLiveVideoResolution(VIDEO_RESOLUTION_1920_1080);
         liveStreamManager.setVideoSource(LiveStreamManager.LiveStreamVideoSource.Primary);
     }

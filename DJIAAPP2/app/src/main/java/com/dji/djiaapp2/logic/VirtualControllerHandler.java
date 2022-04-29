@@ -4,6 +4,9 @@ import static com.dji.djiaapp2.utils.AppConfiguration.DRONE_MODE_FREE;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.MutableLiveData;
+
 import com.dji.djiaapp2.MApplication;
 import com.dji.djiaapp2.models.Drone;
 
@@ -13,6 +16,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import dji.common.error.DJIError;
+import dji.common.flightcontroller.FlightControllerState;
+import dji.common.flightcontroller.LocationCoordinate3D;
 import dji.common.flightcontroller.virtualstick.FlightControlData;
 import dji.common.flightcontroller.virtualstick.FlightCoordinateSystem;
 import dji.common.flightcontroller.virtualstick.RollPitchControlMode;
@@ -144,5 +149,15 @@ public class VirtualControllerHandler {
                 flightController.sendVirtualStickFlightControlData(new FlightControlData(p, r, w, t), djiError -> { });
             }
         }
+    }
+
+    public void getAltitude(MutableLiveData<Float> currentAlt)
+    {
+        flightController.setStateCallback(new FlightControllerState.Callback() {
+            @Override
+            public void onUpdate(@NonNull FlightControllerState flightControllerState) {
+                currentAlt.postValue(flightControllerState.getAircraftLocation().getAltitude());
+            }
+        });
     }
 }

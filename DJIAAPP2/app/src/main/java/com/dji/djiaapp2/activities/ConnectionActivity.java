@@ -51,7 +51,6 @@ public class ConnectionActivity extends AppCompatActivity {
     private ImageView sdkStatus;
     private ImageView connectionStatus;
     private TextView droneModel;
-    private ProgressBar loadingBar;
     private ConnectionViewModel connectionViewModel;
 
     @Override
@@ -78,7 +77,6 @@ public class ConnectionActivity extends AppCompatActivity {
         sdkStatus = findViewById(R.id.sdkStatus);
         connectionStatus = findViewById(R.id.connectionStatus);
         droneModel = findViewById(R.id.drone);
-        loadingBar = findViewById(R.id.loadingBar);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();

@@ -41,6 +41,7 @@ public class VideoViewModel extends AndroidViewModel {
     private LiveStreamHandler liveStreamHandler;
 
     public MutableLiveData<Integer> isOnMission = new MutableLiveData<Integer>();
+    public MutableLiveData<Float> currentAltitude = new MutableLiveData<Float>();
 
     public VideoViewModel(@NonNull Application application) {
         super(application);
@@ -52,6 +53,7 @@ public class VideoViewModel extends AndroidViewModel {
         mCodecManager = null;
         isOnMission.postValue(Drone.getInstance().getMode());
         listenMissionEnd();
+        updateAltitude();
     }
 
     public void cleanSurface() {
@@ -63,11 +65,7 @@ public class VideoViewModel extends AndroidViewModel {
 
     public void stopMission() {
         if (Drone.getInstance().isOnMission()) {
-            missionHandler.stopWaypointMission(DRONE_MODE_FREE, new Callback() {
-                @Override
-                public void onComplete() {
-                }
-            });
+            missionHandler.stopWaypointMission(DRONE_MODE_FREE, () -> { });
         }
     }
 
@@ -151,8 +149,13 @@ public class VideoViewModel extends AndroidViewModel {
                         ZMQ.Socket socket = context.createSocket(SocketType.PULL);
                         socket.connect("tcp://" + AppConfiguration.CONTROLLER_IP_ADDRESS + ":5555");
                         Log.e("ZeroMQ", "Listening to Host");
+                        long startTime = System.currentTimeMillis();
                         while (!Thread.currentThread().isInterrupted()) {
                             String message = new String(socket.recv(0));
+                            long currentTime =  System.currentTimeMillis();
+                            long latency = currentTime- startTime;
+                            startTime = currentTime;
+                            Log.i("ZeroMQ", "Command Latency: " + latency + "ms");
                             if (message.split(",").length > 1) {
                                 String vX = message.split(",")[0];
                                 String vY = message.split(",")[1];
@@ -203,5 +206,9 @@ public class VideoViewModel extends AndroidViewModel {
 
     public void stopRTMP() {
         liveStreamHandler.stopStream();
+    }
+
+    private void updateAltitude() {
+        virtualControllerHandler.getAltitude(currentAltitude);
     }
 }

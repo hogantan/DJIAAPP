@@ -30,6 +30,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
@@ -75,6 +76,7 @@ public class VideoActivity extends AppCompatActivity
     private OnScreenJoystick joystickRight;
     private OnScreenJoystick joystickLeft;
     private ProgressDialog loadingBar;
+    private TextView altitude;
 
     private VideoViewModel videoViewModel;
     protected VideoFeeder.VideoDataListener mReceivedVideoDataListener = null;
@@ -179,6 +181,8 @@ public class VideoActivity extends AppCompatActivity
         startRTMPBtn.setOnClickListener(view -> videoViewModel.startRTMP());
 
         loadingBar = new ProgressDialog(VideoActivity.this);
+
+        altitude = findViewById(R.id.altitude);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().show();
@@ -378,6 +382,10 @@ public class VideoActivity extends AppCompatActivity
                 mode.setImageResource(R.drawable.ic_baseline_location_searching_24);
                 toggleLayoutBtn.setVisibility(View.INVISIBLE);
             }
+        });
+
+        videoViewModel.currentAltitude.observe(this, i -> {
+            altitude.setText("H: " + String.valueOf(i) + "m");
         });
     }
 
