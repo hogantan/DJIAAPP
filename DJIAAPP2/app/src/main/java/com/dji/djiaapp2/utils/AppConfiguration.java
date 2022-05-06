@@ -9,7 +9,7 @@ public class AppConfiguration {
     public static int DRONE_MODE_SEARCH = 1;
     public static int DRONE_MODE_CHASE = 2;
     // Controller App settings
-    public static String CONTROLLER_IP_ADDRESS = "10.255.252.25";
+    public static String CONTROLLER_IP_ADDRESS = "127.0.0.1";
     public static String SCREEN_MIRROR_RTSP_SERVER_ADDR = "rtsp://127.0.0.1:8554/test";
     public static String RTMPUrl = "rtmp://127.0.0.1:1936/test";
     // Movement settings
