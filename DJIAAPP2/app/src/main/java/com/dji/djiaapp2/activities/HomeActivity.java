@@ -2,8 +2,6 @@ package com.dji.djiaapp2.activities;
 
 import static com.dji.djiaapp2.utils.AppConfiguration.DRONE_MODE_FREE;
 import static com.dji.djiaapp2.utils.AppConfiguration.DRONE_MODE_SEARCH;
-import static com.dji.djiaapp2.utils.AppConfiguration.STREAM_MIRROR;
-import static com.dji.djiaapp2.utils.AppConfiguration.STREAM_RAW;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -78,7 +76,6 @@ public class HomeActivity extends AppCompatActivity {
         startWithoutMissionBtn = findViewById(R.id.startWithoutMission);
         startWithoutMissionBtn.setOnClickListener(view -> {
             Intent intent = new Intent(HomeActivity.this, VideoActivity.class);
-            intent.putExtra("stream", STREAM_RAW);
             intent.putExtra("mode", DRONE_MODE_FREE);
             startActivityForResult(intent, RESET_CODE);
         });

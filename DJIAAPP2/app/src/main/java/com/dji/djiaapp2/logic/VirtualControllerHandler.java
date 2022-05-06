@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.dji.djiaapp2.MApplication;
 import com.dji.djiaapp2.models.Drone;
+import com.dji.djiaapp2.utils.AppConfiguration;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -39,8 +40,6 @@ public class VirtualControllerHandler {
     private Timer mSendVirtualStickDataTimer;
     private SendVirtualStickDataTask mSendVirtualStickDataTask;
 
-    float pitchJoyControlMaxSpeed = 7;
-    float rollJoyControlMaxSpeed = 7;
     float verticalJoyControlMaxSpeed = 2;
     float yawJoyControlMaxSpeed = 30;
 
@@ -55,23 +54,23 @@ public class VirtualControllerHandler {
                 this.flightController.setVerticalControlMode(VerticalControlMode.VELOCITY);
                 this.flightController.setRollPitchCoordinateSystem(FlightCoordinateSystem.BODY);
                 this.flightController.setVirtualStickAdvancedModeEnabled(true);
-                this.enable(true);
-
-                if (!isOnMission) {
-                    this.flightController.startTakeoff(djiError -> {
-                        if (djiError != null) {
-                            Log.e("VirtualController", djiError.getDescription());
-                        }
-                    });
-                }
+                this.enable(true, isOnMission);
             }
         }
     }
 
-    public void enable(boolean isEnabled) {
+    public void enable(boolean isEnabled, boolean onMission) {
         this.flightController.setVirtualStickModeEnabled(isEnabled, djiError -> {
             if (djiError != null){
-                Log.e("VirtualController123", djiError.getDescription());
+                Log.e("VirtualController", djiError.getDescription());
+            } else {
+                if (!onMission) {
+                    this.flightController.startTakeoff(djiError2 -> {
+                        if (djiError2 != null) {
+                            Log.e("VirtualController", djiError2.getDescription());
+                        }
+                    });
+                }
             }
         });
     }
@@ -83,8 +82,8 @@ public class VirtualControllerHandler {
             return;
         }
 
-        Drone.getInstance().setmPitch(pX * pitchJoyControlMaxSpeed);
-        Drone.getInstance().setmRoll(pY * rollJoyControlMaxSpeed);
+        Drone.getInstance().setmPitch(pX * AppConfiguration.maxSpeed);
+        Drone.getInstance().setmRoll(pY * AppConfiguration.maxSpeed);
 
         if (null == mSendVirtualStickDataTimer) {
             mSendVirtualStickDataTask = new SendVirtualStickDataTask();
@@ -111,8 +110,8 @@ public class VirtualControllerHandler {
     }
 
     public void move(float x, float y) {
-        Drone.getInstance().setmPitch(x * pitchJoyControlMaxSpeed);
-        Drone.getInstance().setmRoll(y * rollJoyControlMaxSpeed);
+        Drone.getInstance().setmPitch(x * AppConfiguration.maxSpeed);
+        Drone.getInstance().setmRoll(y * AppConfiguration.maxSpeed);
 
         if (null == mSendVirtualStickDataTimer) {
             mSendVirtualStickDataTask = new SendVirtualStickDataTask();

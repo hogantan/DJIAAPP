@@ -138,13 +138,26 @@
         android:id="@+id/altitude"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:fontFamily="@font/allerta"
         android:text="H: 0.0m"
         android:textColor="@color/colorOffBlack"
-        app:layout_constraintEnd_toEndOf="@+id/mode"
-        app:layout_constraintHorizontal_bias="0.529"
-        app:layout_constraintStart_toStartOf="@+id/mode"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.976"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mode" />
+
+    <TextView
+        android:id="@+id/latency"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:fontFamily="@font/allerta"
+        android:text="P: 0m"
+        android:textColor="@color/colorOffBlack"
+        app:layout_constraintEnd_toEndOf="@+id/altitude"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/altitude" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

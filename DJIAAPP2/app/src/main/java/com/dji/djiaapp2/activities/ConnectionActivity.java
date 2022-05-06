@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Handler;
 import android.transition.Fade;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -51,6 +52,7 @@ public class ConnectionActivity extends AppCompatActivity {
     private ImageView sdkStatus;
     private ImageView connectionStatus;
     private TextView droneModel;
+    private ProgressBar loadingBar;
     private ConnectionViewModel connectionViewModel;
 
     @Override
@@ -77,6 +79,7 @@ public class ConnectionActivity extends AppCompatActivity {
         sdkStatus = findViewById(R.id.sdkStatus);
         connectionStatus = findViewById(R.id.connectionStatus);
         droneModel = findViewById(R.id.drone);
+        loadingBar = findViewById(R.id.loadingBar);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
@@ -166,6 +169,7 @@ public class ConnectionActivity extends AppCompatActivity {
                 if (s != null) {
                     droneModel.setText(s);
                     droneModel.setTextColor(getResources().getColor(R.color.colorGreen));
+                    loadingBar.setVisibility(View.INVISIBLE);
                     launchApp();
                 } else {
                     droneModel.setTextColor(getResources().getColor(R.color.colorRed));

@@ -9,6 +9,7 @@ import android.util.Log;
 import androidx.documentfile.provider.DocumentFile;
 
 import com.dji.djiaapp2.models.Drone;
+import com.dji.djiaapp2.utils.AppConfiguration;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -48,7 +49,6 @@ public class WaypointMissionHandler {
     // Settings for waypoint mission behaviour
     private WaypointMissionFinishedAction mFinishedAction = WaypointMissionFinishedAction.NO_ACTION;
     private WaypointMissionHeadingMode mHeadingMode = WaypointMissionHeadingMode.AUTO;
-    private float minSpeed = 10.0f;
     private float maxSpeed = 15.0f;
     private LocationCoordinate3D currentLocation;
 
@@ -115,7 +115,7 @@ public class WaypointMissionHandler {
 
             waypointMissionBuilder.finishedAction(mFinishedAction)
                     .headingMode(mHeadingMode)
-                    .autoFlightSpeed(minSpeed)
+                    .autoFlightSpeed(AppConfiguration.maxSpeed)
                     .maxFlightSpeed(maxSpeed)
                     .flightPathMode(WaypointMissionFlightPathMode.NORMAL);
 

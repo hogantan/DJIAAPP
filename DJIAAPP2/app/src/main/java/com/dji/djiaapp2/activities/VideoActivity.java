@@ -1,7 +1,11 @@
 package com.dji.djiaapp2.activities;
 
+import static com.dji.djiaapp2.utils.AppConfiguration.CONTROLLER_IP_ADDRESS;
 import static com.dji.djiaapp2.utils.AppConfiguration.DRONE_MODE_FREE;
 import static com.dji.djiaapp2.utils.AppConfiguration.DRONE_MODE_SEARCH;
+import static com.dji.djiaapp2.utils.AppConfiguration.RTMPUrl;
+import static com.dji.djiaapp2.utils.AppConfiguration.SCREEN_MIRROR_RTSP_SERVER_ADDR;
+import static com.dji.djiaapp2.utils.AppConfiguration.maxSpeed;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -77,6 +81,7 @@ public class VideoActivity extends AppCompatActivity
     private OnScreenJoystick joystickLeft;
     private ProgressDialog loadingBar;
     private TextView altitude;
+    private TextView latency;
 
     private VideoViewModel videoViewModel;
     protected VideoFeeder.VideoDataListener mReceivedVideoDataListener = null;
@@ -183,6 +188,7 @@ public class VideoActivity extends AppCompatActivity
         loadingBar = new ProgressDialog(VideoActivity.this);
 
         altitude = findViewById(R.id.altitude);
+        latency = findViewById(R.id.latency);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().show();
@@ -287,6 +293,12 @@ public class VideoActivity extends AppCompatActivity
                 final EditText controllerIP = settings.findViewById(R.id.controllerIP);
                 final EditText screenMirrorAddr = settings.findViewById(R.id.screenMirroRtspServer);
                 final EditText RTMPAddr = settings.findViewById(R.id.RTMPUrl);
+                final EditText maxSpd = settings.findViewById(R.id.maxSpeed);
+
+                controllerIP.setText(CONTROLLER_IP_ADDRESS);
+                screenMirrorAddr.setText(SCREEN_MIRROR_RTSP_SERVER_ADDR);
+                RTMPAddr.setText(RTMPUrl);
+                maxSpd.setText(Integer.toString(maxSpeed));
 
                 alert.setTitle("Settings");
                 alert.setView(settings);
@@ -296,6 +308,11 @@ public class VideoActivity extends AppCompatActivity
                         AppConfiguration.setControllerIpAddress(controllerIP.getText().toString());
                         AppConfiguration.setScreenMirrorServerAddr(screenMirrorAddr.getText().toString());
                         AppConfiguration.setRTMPUrl(RTMPAddr.getText().toString());
+                        try{
+                            AppConfiguration.setMaxSpeed(Integer.parseInt(maxSpd.getText().toString().trim()));
+                        } catch (NumberFormatException error) {
+                            // ignore input
+                        }
                     }
                 });
 
@@ -387,6 +404,10 @@ public class VideoActivity extends AppCompatActivity
         videoViewModel.currentAltitude.observe(this, i -> {
             altitude.setText("H: " + String.valueOf(i) + "m");
         });
+
+        videoViewModel.currentLatency.observe(this, i -> {
+            latency.setText("P: " + String.valueOf(i) + "ms");
+        });
     }
 
     @Override
@@ -394,7 +415,7 @@ public class VideoActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
         if (data != null && (requestCode == REQUEST_CODE_STREAM
                 || requestCode == REQUEST_CODE_RECORD && resultCode == Activity.RESULT_OK)) {
-            videoViewModel.startScreenMirror(AppConfiguration.SCREEN_MIRROR_RTSP_SERVER_ADDR
+            videoViewModel.startScreenMirror(SCREEN_MIRROR_RTSP_SERVER_ADDR
                     , resultCode, data, 1920, getOutputHeight());
         }
     }

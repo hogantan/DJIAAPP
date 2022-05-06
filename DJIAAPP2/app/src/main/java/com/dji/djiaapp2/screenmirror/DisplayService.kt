@@ -147,7 +147,7 @@ class DisplayService : Service() {
 
   fun startStreamRtp(endpoint: String, width: Int, height: Int) {
     if (displayBase?.isStreaming != true) {
-      if (displayBase?.prepareVideo(width, height, 30, 8000000, 0, 480) == true) {
+      if (displayBase?.prepareVideo(width, height, 30, 4000000, 0, 320) == true) {
         displayBase?.disableAudio()
         displayBase?.startStream(endpoint)
       }

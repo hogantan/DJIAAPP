@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/chase_btn.xml" value="0.1645" />
         <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/chase_btn_checked.xml" value="0.1465" />
         <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/chase_btn_unchecked.xml" value="0.1465" />
         <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/ic_baseline_cancel_24.xml" value="0.1465" />
@@ -19,15 +20,16 @@
         <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/ic_baseline_save_alt_24.xml" value="0.1465" />
         <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/ic_baseline_settings_24.xml" value="0.1565" />
         <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/ic_launcher2_foreground.xml" value="0.1" />
+        <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/land_btn.xml" value="0.1645" />
         <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/start_rtmp_btn.xml" value="0.1465" />
         <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/startmirror_btn.xml" value="0.1465" />
         <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/togglelayout.xml" value="0.1465" />
         <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/togglelayout_checked.xml" value="0.1465" />
         <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/togglelayout_unchecked.xml" value="0.1465" />
-        <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/layout/activity_connection.xml" value="0.23369565217391305" />
+        <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/layout/activity_connection.xml" value="0.22" />
         <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/layout/activity_home.xml" value="0.23369565217391305" />
-        <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/layout/activity_video.xml" value="0.5" />
-        <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/layout/settings.xml" value="0.23369565217391305" />
+        <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/layout/activity_video.xml" value="0.31979166666666664" />
+        <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/layout/settings.xml" value="0.5" />
         <entry key="..\:/Users/Admin/Downloads/Android-FPVDemo-master/Android-FPVDemo-master/FPVDemo/app/src/main/res/drawable/chase_btn.xml" value="0.284" />
         <entry key="..\:/Users/Admin/Downloads/Android-FPVDemo-master/Android-FPVDemo-master/FPVDemo/app/src/main/res/drawable/chase_btn_checked.xml" value="0.318" />
         <entry key="..\:/Users/Admin/Downloads/Android-FPVDemo-master/Android-FPVDemo-master/FPVDemo/app/src/main/res/drawable/chase_btn_unchecked.xml" value="0.318" />

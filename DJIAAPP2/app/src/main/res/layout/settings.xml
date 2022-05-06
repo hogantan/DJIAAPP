@@ -13,34 +13,90 @@
         android:layout_height="wrap_content"
         android:gravity="top"
         android:textSize="14sp"
-        android:hint="Enter Controller IP Address (e.g. 127.0.0.1)                           "
+        app:layout_constraintBottom_toBottomOf="@+id/controllerLabel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintHorizontal_bias="0.016"
+        app:layout_constraintStart_toEndOf="@+id/controllerLabel"
+        app:layout_constraintTop_toTopOf="@+id/controllerLabel" />
 
     <EditText
         android:id="@+id/screenMirroRtspServer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:gravity="top"
         android:textSize="14sp"
-        android:hint="Enter RTSP Server Address (e.g. rtsp://127.0.0.1:8554/test)    "
+        app:layout_constraintBottom_toBottomOf="@+id/screenMirrorLabel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.592"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/controllerIP" />
+        app:layout_constraintHorizontal_bias="0.016"
+        app:layout_constraintStart_toEndOf="@+id/screenMirrorLabel"
+        app:layout_constraintTop_toTopOf="@+id/screenMirrorLabel" />
+
     <EditText
         android:id="@+id/RTMPUrl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:gravity="top"
         android:textSize="14sp"
-        android:hint="Enter RTMP Server Address                                                           "
+        app:layout_constraintBottom_toBottomOf="@+id/rtmpLabel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.592"
+        app:layout_constraintHorizontal_bias="0.016"
+        app:layout_constraintStart_toEndOf="@+id/rtmpLabel"
+        app:layout_constraintTop_toTopOf="@+id/rtmpLabel" />
+
+    <EditText
+        android:id="@+id/maxSpeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/droneSpeedLabel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.016"
+        app:layout_constraintStart_toEndOf="@+id/droneSpeedLabel"
+        app:layout_constraintTop_toTopOf="@+id/droneSpeedLabel" />
+
+    <TextView
+        android:id="@+id/controllerLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="88dp"
+        android:text="Controller IP:"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/screenMirroRtspServer" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.107" />
+
+    <TextView
+        android:id="@+id/screenMirrorLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:text="RTSP (Mirror):"
+        app:layout_constraintEnd_toEndOf="@+id/controllerLabel"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/controllerLabel"
+        app:layout_constraintTop_toBottomOf="@+id/controllerLabel" />
+
+    <TextView
+        android:id="@+id/rtmpLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:text="RTMP (Raw):"
+        app:layout_constraintEnd_toStartOf="@+id/screenMirroRtspServer"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/screenMirrorLabel"
+        app:layout_constraintTop_toBottomOf="@+id/screenMirrorLabel" />
+
+    <TextView
+        android:id="@+id/droneSpeedLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:text="Drone Max Speed:"
+        app:layout_constraintEnd_toEndOf="@+id/rtmpLabel"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/rtmpLabel"
+        app:layout_constraintTop_toBottomOf="@+id/rtmpLabel" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

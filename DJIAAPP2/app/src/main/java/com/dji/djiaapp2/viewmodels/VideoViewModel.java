@@ -42,6 +42,7 @@ public class VideoViewModel extends AndroidViewModel {
 
     public MutableLiveData<Integer> isOnMission = new MutableLiveData<Integer>();
     public MutableLiveData<Float> currentAltitude = new MutableLiveData<Float>();
+    public MutableLiveData<Integer> currentLatency = new MutableLiveData<Integer>();
 
     public VideoViewModel(@NonNull Application application) {
         super(application);
@@ -155,7 +156,8 @@ public class VideoViewModel extends AndroidViewModel {
                             long currentTime =  System.currentTimeMillis();
                             long latency = currentTime- startTime;
                             startTime = currentTime;
-                            Log.i("ZeroMQ", "Command Latency: " + latency + "ms");
+                            currentLatency.postValue((int) latency);
+                            Log.e("ZeroMQ", "Command Latency: " + latency + "ms");
                             if (message.split(",").length > 1) {
                                 String vX = message.split(",")[0];
                                 String vY = message.split(",")[1];
@@ -168,6 +170,9 @@ public class VideoViewModel extends AndroidViewModel {
                                 }
                             }
                         }
+                    }
+                    catch (Exception error) {
+                        Log.e("ZeroMQ", error.getMessage());
                     }
                 }
             });
