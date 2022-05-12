@@ -9,8 +9,9 @@
 
     <EditText
         android:id="@+id/controllerIP"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
         android:gravity="top"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="@+id/controllerLabel"
@@ -21,8 +22,9 @@
 
     <EditText
         android:id="@+id/screenMirroRtspServer"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
         android:gravity="top"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="@+id/screenMirrorLabel"
@@ -33,8 +35,9 @@
 
     <EditText
         android:id="@+id/RTMPUrl"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
         android:gravity="top"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="@+id/rtmpLabel"
@@ -45,8 +48,9 @@
 
     <EditText
         android:id="@+id/maxSpeed"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
         android:gravity="top"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="@+id/droneSpeedLabel"
@@ -60,7 +64,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="88dp"
+        android:fontFamily="@font/allerta"
         android:text="Controller IP:"
+        android:textColor="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -71,7 +77,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="36dp"
+        android:fontFamily="@font/allerta"
         android:text="RTSP (Mirror):"
+        android:textColor="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="@+id/controllerLabel"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/controllerLabel"
@@ -82,7 +90,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="36dp"
+        android:fontFamily="@font/allerta"
         android:text="RTMP (Raw):"
+        android:textColor="@color/colorPrimary"
         app:layout_constraintEnd_toStartOf="@+id/screenMirroRtspServer"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/screenMirrorLabel"
@@ -93,7 +103,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="36dp"
+        android:fontFamily="@font/allerta"
         android:text="Drone Max Speed:"
+        android:textColor="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="@+id/rtmpLabel"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/rtmpLabel"

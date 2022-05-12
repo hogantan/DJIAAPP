@@ -1,17 +1,12 @@
 package com.dji.djiaapp2.activities;
 
-import static com.dji.djiaapp2.utils.AppConfiguration.CONTROLLER_IP_ADDRESS;
 import static com.dji.djiaapp2.utils.AppConfiguration.DRONE_MODE_FREE;
 import static com.dji.djiaapp2.utils.AppConfiguration.DRONE_MODE_SEARCH;
-import static com.dji.djiaapp2.utils.AppConfiguration.RTMPUrl;
 import static com.dji.djiaapp2.utils.AppConfiguration.SCREEN_MIRROR_RTSP_SERVER_ADDR;
-import static com.dji.djiaapp2.utils.AppConfiguration.maxSpeed;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -22,17 +17,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.TextureView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -44,7 +35,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.dji.djiaapp2.R;
 import com.dji.djiaapp2.models.Drone;
-import com.dji.djiaapp2.utils.AppConfiguration;
 import com.dji.djiaapp2.utils.OnScreenJoystick;
 import com.dji.djiaapp2.viewmodels.VideoViewModel;
 import com.dji.djiaapp2.screenmirror.DisplayService;
@@ -70,11 +60,12 @@ public class VideoActivity extends AppCompatActivity
 
     protected TextureView mVideoSurface = null;
     private ImageView mode;
-    private ToggleButton chaseBtn;
-    private Button settingsBtn;
+    private ToggleButton commandListener;
     private Button landBtn;
+    private Button takeoffBtn;
     private Button mirrorScreenBtn;
     private Button startRTMPBtn;
+    private Button startMissionBtn;
     private ToggleButton toggleUI;
     private ToggleButton toggleLayoutBtn;
     private OnScreenJoystick joystickRight;
@@ -106,6 +97,7 @@ public class VideoActivity extends AppCompatActivity
         initUI();
         subscribeToViewModel();
         initRtspClient();
+        videoViewModel.initCommandReceiver();
 
         // The callback for receiving the raw H264 video data for camera live view
         mReceivedVideoDataListener = new VideoFeeder.VideoDataListener() {
@@ -121,32 +113,22 @@ public class VideoActivity extends AppCompatActivity
     }
 
     private void initUI() {
-        Bundle bundle = getIntent().getExtras();
-        int currentMode = bundle.getInt("mode");
-
         mode = findViewById(R.id.mode);
-        if (currentMode == (DRONE_MODE_SEARCH)) {
-            mode.setImageResource(R.drawable.ic_baseline_location_on_24);
-        } else {
-            mode.setImageResource(R.drawable.ic_baseline_control_camera_24);
-        }
+
         mVideoSurface = findViewById(R.id.primaryVideoFeed);
 
         if (null != mVideoSurface) {
             mVideoSurface.setSurfaceTextureListener(this);
         }
 
-        chaseBtn = findViewById(R.id.chaseBtn);
-        chaseBtn.setOnCheckedChangeListener((buttonView, isChecked) -> {
+        commandListener = findViewById(R.id.chaseBtn);
+        commandListener.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 videoViewModel.startChase();
             } else {
-                videoViewModel.stopChase();
+                videoViewModel.startFree();
             }
         });
-
-        settingsBtn = findViewById(R.id.settingsBtn);
-        popupSettings();
 
         joystickRight = findViewById(R.id.joystickRight);
         joystickLeft = findViewById(R.id.joystickLeft);
@@ -176,6 +158,9 @@ public class VideoActivity extends AppCompatActivity
         landBtn = findViewById(R.id.land_btn);
         landBtn.setOnClickListener(view -> videoViewModel.startLand());
 
+        takeoffBtn = findViewById(R.id.takeoff_btn);
+        takeoffBtn.setOnClickListener(view -> videoViewModel.startTakeoff());
+
         toggleLayoutBtn = findViewById(R.id.toggleLayoutBtn);
         toggleLayout();
 
@@ -184,6 +169,9 @@ public class VideoActivity extends AppCompatActivity
 
         startRTMPBtn = findViewById(R.id.startrtmp_btn);
         startRTMPBtn.setOnClickListener(view -> videoViewModel.startRTMP());
+
+        startMissionBtn = findViewById(R.id.startmission_btn);
+        startMissionBtn.setOnClickListener(view -> videoViewModel.startMission());
 
         loadingBar = new ProgressDialog(VideoActivity.this);
 
@@ -199,6 +187,26 @@ public class VideoActivity extends AppCompatActivity
 
         if (null != mVideoSurface) {
             mVideoSurface.setSurfaceTextureListener(this);
+        }
+
+        if (getIntent().getExtras().getBoolean("hasUploaded")) {
+            startMissionBtn.setEnabled(true);
+            startMissionBtn.setVisibility(View.VISIBLE);
+        } else {
+            startMissionBtn.setEnabled(false);
+            startMissionBtn.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent.getExtras().getBoolean("hasUploaded")) {
+            startMissionBtn.setEnabled(true);
+            startMissionBtn.setVisibility(View.VISIBLE);
+        } else {
+            startMissionBtn.setEnabled(false);
+            startMissionBtn.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -249,7 +257,7 @@ public class VideoActivity extends AppCompatActivity
                     builder.setCancelable(false)
                             .setPositiveButton("Yes", (dialog, id) -> {
                                 videoViewModel.stopMission();
-                                videoViewModel.stopChase();
+                                videoViewModel.startFree();
 
                                 loadingBar.setTitle("Loading");
                                 loadingBar.setMessage("Please wait..");
@@ -274,89 +282,30 @@ public class VideoActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    private void popupSettings() {
-        settingsBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final View settings = LayoutInflater.from(VideoActivity.this).inflate(R.layout.settings, null);
-                AlertDialog.Builder alert = new AlertDialog.Builder(VideoActivity.this, R.style.AlertDialogCustom);
-                alert.setCancelable(false);
-                settings.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View view, MotionEvent motionEvent) {
-                        InputMethodManager imm = (InputMethodManager) getBaseContext().getSystemService(Context
-                                .INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(settings.getWindowToken(), 0);
-                        return true;
-                    }
-                });
-                final EditText controllerIP = settings.findViewById(R.id.controllerIP);
-                final EditText screenMirrorAddr = settings.findViewById(R.id.screenMirroRtspServer);
-                final EditText RTMPAddr = settings.findViewById(R.id.RTMPUrl);
-                final EditText maxSpd = settings.findViewById(R.id.maxSpeed);
-
-                controllerIP.setText(CONTROLLER_IP_ADDRESS);
-                screenMirrorAddr.setText(SCREEN_MIRROR_RTSP_SERVER_ADDR);
-                RTMPAddr.setText(RTMPUrl);
-                maxSpd.setText(Integer.toString(maxSpeed));
-
-                alert.setTitle("Settings");
-                alert.setView(settings);
-
-                alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        AppConfiguration.setControllerIpAddress(controllerIP.getText().toString());
-                        AppConfiguration.setScreenMirrorServerAddr(screenMirrorAddr.getText().toString());
-                        AppConfiguration.setRTMPUrl(RTMPAddr.getText().toString());
-                        try{
-                            AppConfiguration.setMaxSpeed(Integer.parseInt(maxSpd.getText().toString().trim()));
-                        } catch (NumberFormatException error) {
-                            // ignore input
-                        }
-                    }
-                });
-
-                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        // do nothing, no update values
-                    }
-                });
-                alert.show();
-            }
-        });
-    }
-
     private void toggleLayout() {
         toggleLayoutBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     landBtn.setVisibility(View.VISIBLE);
+                    takeoffBtn.setVisibility(View.VISIBLE);
                     joystickRight.setVisibility(View.VISIBLE);
                     joystickLeft.setVisibility(View.VISIBLE);
-                    chaseBtn.setVisibility(View.INVISIBLE);
-                    settingsBtn.setVisibility(View.INVISIBLE);
+                    commandListener.setVisibility(View.INVISIBLE);
                     mirrorScreenBtn.setVisibility(View.INVISIBLE);
-                    landBtn.setVisibility(View.INVISIBLE);
                     startRTMPBtn.setVisibility(View.INVISIBLE);
-
-
-                    joystickRight.setAlpha(0);
-                    joystickLeft.setAlpha(0);
-                    joystickRight.animate().alpha(1.0f).setDuration(1000).start();
-                    joystickLeft.animate().alpha(1.0f).setDuration(1000).start();
+                    startMissionBtn.setVisibility(View.INVISIBLE);
 
                 } else {
                     landBtn.setVisibility(View.INVISIBLE);
+                    takeoffBtn.setVisibility(View.INVISIBLE);
                     joystickRight.setVisibility(View.INVISIBLE);
                     joystickLeft.setVisibility(View.INVISIBLE);
-                    chaseBtn.setVisibility(View.VISIBLE);
-                    settingsBtn.setVisibility(View.VISIBLE);
+                    commandListener.setVisibility(View.VISIBLE);
                     mirrorScreenBtn.setVisibility(View.VISIBLE);
-                    landBtn.setVisibility(View.VISIBLE);
                     startRTMPBtn.setVisibility(View.VISIBLE);
-
-                    settingsBtn.setAlpha(0);
-                    settingsBtn.animate().alpha(1.0f).setDuration(1000).start();
+                    if (startMissionBtn.isEnabled()) {
+                        startMissionBtn.setVisibility(View.VISIBLE);
+                    }
                 }
             }
         });
@@ -376,27 +325,38 @@ public class VideoActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        Intent intent = new Intent();
-        intent.putExtra("reset", "true");
-        setResult(RESULT_OK, intent);
+        Intent intent = new Intent(this, HomeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         DisplayService displayService = videoViewModel.getDisplayService();
         if (displayService.isStreaming()) {
             displayService.stopStream();
         }
         videoViewModel.stopRTMP();
+        Drone.getInstance().setMode(DRONE_MODE_FREE);
+        Drone.getInstance().setListeningToCommands(false);
+        startActivity(intent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        DisplayService displayService = videoViewModel.getDisplayService();
+        if (displayService != null && !displayService.isStreaming() && !displayService.isRecording()) {
+            stopService(new Intent(this, DisplayService.class));
+        }
     }
 
     private void subscribeToViewModel() {
-        videoViewModel.isOnMission.observe(this, i -> {
+        videoViewModel.currentMode.observe(this, i -> {
             if (i == DRONE_MODE_FREE) {
                 mode.setImageResource(R.drawable.ic_baseline_control_camera_24);
                 toggleLayoutBtn.setVisibility(View.VISIBLE);
             } else if (i == DRONE_MODE_SEARCH) {
                 mode.setImageResource(R.drawable.ic_baseline_location_on_24);
-                toggleLayoutBtn.setVisibility(View.INVISIBLE);
+                toggleLayoutBtn.setVisibility(View.VISIBLE);
             } else {
                 mode.setImageResource(R.drawable.ic_baseline_location_searching_24);
+                commandListener.setChecked(true);
                 toggleLayoutBtn.setVisibility(View.INVISIBLE);
             }
         });
@@ -407,6 +367,16 @@ public class VideoActivity extends AppCompatActivity
 
         videoViewModel.currentLatency.observe(this, i -> {
             latency.setText("P: " + String.valueOf(i) + "ms");
+        });
+
+        videoViewModel.hasMission.observe(this, i -> {
+            if (i) {
+                startMissionBtn.setEnabled(true);
+                startMissionBtn.setVisibility(View.VISIBLE);
+            } else {
+                startMissionBtn.setEnabled(false);
+                startMissionBtn.setVisibility(View.INVISIBLE);
+            }
         });
     }
 
@@ -443,25 +413,19 @@ public class VideoActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        DisplayService displayService = videoViewModel.getDisplayService();
-        if (displayService != null && !displayService.isStreaming() && !displayService.isRecording()) {
-            //stop service only if no streaming or recording
-            stopService(new Intent(this, DisplayService.class));
-        }
-    }
-
     private void hideAllUI() {
+        toggleLayoutBtn.setChecked(false);
         mode.setVisibility(View.INVISIBLE);
-        chaseBtn.setVisibility(View.INVISIBLE);
-        settingsBtn.setVisibility(View.INVISIBLE);
+        commandListener.setVisibility(View.INVISIBLE);
         landBtn.setVisibility(View.INVISIBLE);
+        takeoffBtn.setVisibility(View.INVISIBLE);
+        joystickLeft.setVisibility(View.INVISIBLE);
+        joystickRight.setVisibility(View.INVISIBLE);
         toggleLayoutBtn.setVisibility(View.INVISIBLE);
         mirrorScreenBtn.setVisibility(View.INVISIBLE);
         startRTMPBtn.setVisibility(View.INVISIBLE);
-        toggleLayoutBtn.setVisibility(View.INVISIBLE);
+        startMissionBtn.setVisibility(View.INVISIBLE);
+
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
@@ -470,13 +434,15 @@ public class VideoActivity extends AppCompatActivity
 
     private void showAllUI() {
         mode.setVisibility(View.VISIBLE);
-        chaseBtn.setVisibility(View.VISIBLE);
-        settingsBtn.setVisibility(View.VISIBLE);
-        landBtn.setVisibility(View.VISIBLE);
+        commandListener.setVisibility(View.VISIBLE);
         toggleLayoutBtn.setVisibility(View.VISIBLE);
         mirrorScreenBtn.setVisibility(View.VISIBLE);
         startRTMPBtn.setVisibility(View.VISIBLE);
         toggleLayoutBtn.setVisibility(View.VISIBLE);
+        if (startMissionBtn.isEnabled()) {
+            startMissionBtn.setVisibility(View.VISIBLE);
+        }
+
         if (getSupportActionBar() != null) {
             getSupportActionBar().show();
         }

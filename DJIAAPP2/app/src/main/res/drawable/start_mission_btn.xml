@@ -7,7 +7,7 @@
             <corners android:radius="30dp"></corners>
         </shape>
     </item>
-    <item android:drawable="@drawable/ic_baseline_location_searching_16"
+    <item android:drawable="@drawable/ic_baseline_explore_24"
         android:bottom="10dp"
         android:left="10dp"
         android:right="10dp"

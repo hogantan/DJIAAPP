@@ -8,21 +8,21 @@
     tools:context=".activities.HomeActivity">
 
     <Button
-        android:id="@+id/startMission"
+        android:id="@+id/startBtn"
         style="?selectableItemBackground"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/round_button_transparent"
+        android:background="@drawable/round_button"
         android:fontFamily="@font/allerta"
-        android:text="                          Start Mission                          "
+        android:text="                       Start                       "
         android:textAllCaps="false"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/colorSecondary"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.543"
-        app:layout_constraintStart_toEndOf="@+id/uploadBtn"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.36" />
+        app:layout_constraintEnd_toEndOf="@+id/uplaodHint"
+        app:layout_constraintHorizontal_bias="0.511"
+        app:layout_constraintStart_toStartOf="@+id/uplaodHint"
+        app:layout_constraintTop_toBottomOf="@+id/uplaodHint"
+        app:layout_constraintVertical_bias="0.337" />
 
     <TextView
         android:id="@+id/waypointFilename"
@@ -34,11 +34,9 @@
         android:textColor="@color/colorPrimary"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/uploadBtn"
         app:layout_constraintStart_toStartOf="@+id/uploadBtn"
-        app:layout_constraintTop_toBottomOf="@+id/uploadBtn"
-        app:layout_constraintVertical_bias="0.16" />
+        app:layout_constraintTop_toBottomOf="@+id/uploadBtn" />
 
     <ImageView
         android:id="@+id/uploadBtn"
@@ -46,10 +44,10 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.184"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.255"
+        app:layout_constraintVertical_bias="0.073"
         app:srcCompat="@drawable/ic_baseline_save_alt_24" />
 
     <TextView
@@ -63,18 +61,14 @@
         app:layout_constraintTop_toBottomOf="@+id/waypointFilename" />
 
     <Button
-        android:id="@+id/startWithoutMission"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/round_button"
-        android:text="                    Start Without Mission                   "
-        android:textAllCaps="false"
-        android:textColor="@color/colorSecondary"
+        android:id="@+id/settingsBtn"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/ic_baseline_settings_24"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/startMission"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/startMission"
-        app:layout_constraintTop_toBottomOf="@+id/startMission"
-        app:layout_constraintVertical_bias="0.277" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.955" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

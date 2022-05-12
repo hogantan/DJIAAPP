@@ -48,7 +48,7 @@ public class WaypointMissionHandler {
 
     // Settings for waypoint mission behaviour
     private WaypointMissionFinishedAction mFinishedAction = WaypointMissionFinishedAction.NO_ACTION;
-    private WaypointMissionHeadingMode mHeadingMode = WaypointMissionHeadingMode.AUTO;
+    private WaypointMissionHeadingMode mHeadingMode = WaypointMissionHeadingMode.TOWARD_POINT_OF_INTEREST;
     private float maxSpeed = 15.0f;
     private LocationCoordinate3D currentLocation;
 
@@ -73,7 +73,6 @@ public class WaypointMissionHandler {
             xpp.setInput(new BufferedReader(new InputStreamReader(inputStream)));
 
             String tagValue = null, startTag = null, endTag = null;
-            waypoints.clear();
             int eventType = xpp.getEventType();
             while (eventType != XmlPullParser.END_DOCUMENT) {
                 switch (eventType) {
@@ -117,6 +116,7 @@ public class WaypointMissionHandler {
                     .headingMode(mHeadingMode)
                     .autoFlightSpeed(AppConfiguration.maxSpeed)
                     .maxFlightSpeed(maxSpeed)
+                    .setGimbalPitchRotationEnabled(false)
                     .flightPathMode(WaypointMissionFlightPathMode.NORMAL);
 
             // Load and upload mission to drone
@@ -151,40 +151,39 @@ public class WaypointMissionHandler {
         return hasUploaded;
     }
 
-    public void startWaypointMission() {
+    public void startWaypointMission(Callback callback) {
         waypointMissionOperator.startMission(error -> {
             if (error == null) {
                 Drone.getInstance().setMode(DRONE_MODE_SEARCH);
+                Drone.getInstance().setListeningToCommands(true);
             } else {
                 Drone.getInstance().setMode(DRONE_MODE_FREE);
             }
+            callback.onComplete();
             Log.e(TAG, "Mission Start: " + (error == null ? "Successfully" : error.getDescription()));
         });
     }
 
     public void stopWaypointMission(int mode, Callback callback) {
-        if (Drone.getInstance().isFree()) {
-            Drone.getInstance().setMode(mode);
+        waypointMissionOperator.stopMission(error -> {
+            if (error == null) {
+                Drone.getInstance().setMode(mode);
+                hasUploaded = false;
+            } else {
+                Drone.getInstance().setMode(DRONE_MODE_SEARCH);
+            }
             callback.onComplete();
-        } else {
-            waypointMissionOperator.stopMission(error -> {
-                if (error == null) {
-                    Drone.getInstance().setMode(mode);
-                    callback.onComplete();
-                } else {
-                    Drone.getInstance().setMode(DRONE_MODE_SEARCH);
-                    callback.onComplete();
-                }
-                Log.e(TAG, "Mission Stop: " + (error == null ? "Successfully" : error.getDescription()));
-            });
-        }
+            Log.e(TAG, "Mission Stop: " + (error == null ? "Successfully" : error.getDescription()));
+        });
     }
 
     public WaypointMissionOperator getOperator() {
         return waypointMissionOperator;
     }
 
-    public void reset() {
+    public void cleanUp() {
+        waypoints.clear();
+        waypointMissionOperator.clearMission();
         wayPointFile = null;
         hasUploaded = false;
     }

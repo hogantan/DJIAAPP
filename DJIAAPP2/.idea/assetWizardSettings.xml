@@ -319,7 +319,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/linked_camera/baseline_linked_camera_24.xml" />
+                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/explore/baseline_explore_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -330,7 +330,7 @@
                         <option name="values">
                           <map>
                             <entry key="color" value="f3f3f3" />
-                            <entry key="outputName" value="ic_baseline_linked_camera_24" />
+                            <entry key="outputName" value="ic_baseline_explore_24" />
                             <entry key="sourceFile" value="C:\Users\Admin\Downloads\Android-FPVDemo-master\Android-FPVDemo-master\FPVDemo" />
                           </map>
                         </option>

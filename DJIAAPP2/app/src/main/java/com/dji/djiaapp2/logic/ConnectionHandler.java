@@ -41,9 +41,7 @@ public class ConnectionHandler {
                     public void onRegister(DJIError djiError) {
                         if (djiError == DJISDKError.REGISTRATION_SUCCESS) {
                             Log.i(TAG, "Register Success");
-                            //DJISDKManager.getInstance().enableBridgeModeWithBridgeAppIP("100.110.58.76"); // For DJI Bridging App Testing
-                            //DJISDKManager.getInstance().enableBridgeModeWithBridgeAppIP("10.255.253.79"); // For DJI Bridging App Testing
-
+                            //DJISDKManager.getInstance().enableBridgeModeWithBridgeAppIP("0.0.0.0"); // For DJI Bridging App Testing
                             DJISDKManager.getInstance().startConnectionToProduct();
                             isSDKRegistered = true;
                         } else {

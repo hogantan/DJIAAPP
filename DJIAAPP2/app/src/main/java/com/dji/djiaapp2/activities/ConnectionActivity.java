@@ -80,6 +80,7 @@ public class ConnectionActivity extends AppCompatActivity {
         connectionStatus = findViewById(R.id.connectionStatus);
         droneModel = findViewById(R.id.drone);
         loadingBar = findViewById(R.id.loadingBar);
+        loadingBar.setIndeterminate(true);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();

@@ -9,12 +9,11 @@ import androidx.documentfile.provider.DocumentFile;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
-import com.dji.djiaapp2.logic.GimbalHandler;
+import com.dji.djiaapp2.logic.Callback;
 import com.dji.djiaapp2.logic.WaypointMissionHandler;
 
 public class HomeViewModel extends AndroidViewModel {
     private WaypointMissionHandler waypointMissionHandler;
-    private GimbalHandler gimbalHandler;
 
     public MutableLiveData<String> selectedFile = new MutableLiveData<>();
     public MutableLiveData<Boolean> hasUploaded = new MutableLiveData<>(false);
@@ -25,23 +24,23 @@ public class HomeViewModel extends AndroidViewModel {
 
     public void init(Context context) {
         waypointMissionHandler = new WaypointMissionHandler(context);
-        gimbalHandler = new GimbalHandler();
     }
 
     public void uploadWaypointFile(Uri file, Context context) {
         DocumentFile documentFile = DocumentFile.fromSingleUri(context, file);
         waypointMissionHandler.parseWaypointFile(documentFile);
-        selectedFile.postValue(waypointMissionHandler.getFilename());
-        waypointMissionHandler.uploadWaypointMission(() -> hasUploaded.postValue(waypointMissionHandler.hasUploaded()));
+        waypointMissionHandler.uploadWaypointMission(new Callback() {
+            @Override
+            public void onComplete() {
+                hasUploaded.postValue(waypointMissionHandler.hasUploaded());
+                selectedFile.postValue(waypointMissionHandler.getFilename());
+            }
+        });
     }
 
-    public void startMission() {
-        waypointMissionHandler.startWaypointMission();
-    }
-
-    public void resetMission() {
-        waypointMissionHandler.reset();
-        selectedFile.postValue(waypointMissionHandler.getFilename());
+    public void cleanUp() {
+        waypointMissionHandler.cleanUp();
         hasUploaded.postValue(waypointMissionHandler.hasUploaded());
+        selectedFile.postValue(waypointMissionHandler.getFilename());
     }
 }

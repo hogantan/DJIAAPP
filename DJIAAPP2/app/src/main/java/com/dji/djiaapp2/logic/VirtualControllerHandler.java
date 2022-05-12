@@ -13,22 +13,16 @@ import com.dji.djiaapp2.utils.AppConfiguration;
 
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-import dji.common.error.DJIError;
 import dji.common.flightcontroller.FlightControllerState;
-import dji.common.flightcontroller.LocationCoordinate3D;
 import dji.common.flightcontroller.virtualstick.FlightControlData;
 import dji.common.flightcontroller.virtualstick.FlightCoordinateSystem;
 import dji.common.flightcontroller.virtualstick.RollPitchControlMode;
 import dji.common.flightcontroller.virtualstick.VerticalControlMode;
 import dji.common.flightcontroller.virtualstick.YawControlMode;
-import dji.common.util.CommonCallbacks;
 import dji.sdk.base.BaseProduct;
 import dji.sdk.flightcontroller.FlightController;
 import dji.sdk.products.Aircraft;
-import dji.sdk.sdkmanager.DJISDKManager;
 
 /**
  * For handling virtual manual control of drone (virtual joystick logic)
@@ -54,23 +48,15 @@ public class VirtualControllerHandler {
                 this.flightController.setVerticalControlMode(VerticalControlMode.VELOCITY);
                 this.flightController.setRollPitchCoordinateSystem(FlightCoordinateSystem.BODY);
                 this.flightController.setVirtualStickAdvancedModeEnabled(true);
-                this.enable(true, isOnMission);
+                this.enable(true);
             }
         }
     }
 
-    public void enable(boolean isEnabled, boolean onMission) {
+    public void enable(boolean isEnabled) {
         this.flightController.setVirtualStickModeEnabled(isEnabled, djiError -> {
             if (djiError != null){
                 Log.e("VirtualController", djiError.getDescription());
-            } else {
-                if (!onMission) {
-                    this.flightController.startTakeoff(djiError2 -> {
-                        if (djiError2 != null) {
-                            Log.e("VirtualController", djiError2.getDescription());
-                        }
-                    });
-                }
             }
         });
     }
@@ -135,6 +121,14 @@ public class VirtualControllerHandler {
 
             });
         }
+    }
+
+    public void startTakeoff() {
+        this.flightController.startTakeoff(djiError2 -> {
+            if (djiError2 != null) {
+                Log.e("VirtualController", djiError2.getDescription());
+            }
+        });
     }
 
     class SendVirtualStickDataTask extends TimerTask {

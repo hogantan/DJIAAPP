@@ -13,7 +13,8 @@ import static com.dji.djiaapp2.utils.AppConfiguration.DRONE_MODE_SEARCH;
 public class Drone {
     private static Drone instance = null;
     private boolean isConnected = false;
-    private boolean isStreaming = false;
+    private boolean isListeningToCommands = false;
+
     private int mode;
     private String model;
 
@@ -54,16 +55,8 @@ public class Drone {
         return mode == DRONE_MODE_CHASE;
     }
 
-    public boolean isStreaming() {
-        return isStreaming;
-    }
-
     public boolean isFree() {
         return mode == DRONE_MODE_FREE;
-    }
-
-    public void setStreaming(boolean streaming) {
-        isStreaming = streaming;
     }
 
     public int getMode() {
@@ -111,5 +104,13 @@ public class Drone {
         setmRoll(roll);
         setmYaw(yaw);
         setmThrottle(throttle);
+    }
+
+    public boolean isListeningToCommands() {
+        return isListeningToCommands;
+    }
+
+    public void setListeningToCommands(boolean listeningToCommands) {
+        isListeningToCommands = listeningToCommands;
     }
 }

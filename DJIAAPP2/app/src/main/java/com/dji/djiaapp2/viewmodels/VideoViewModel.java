@@ -13,7 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
-import com.dji.djiaapp2.logic.Callback;
+import com.dji.djiaapp2.logic.GimbalHandler;
 import com.dji.djiaapp2.logic.LiveStreamHandler;
 import com.dji.djiaapp2.logic.VirtualControllerHandler;
 import com.dji.djiaapp2.logic.WaypointMissionHandler;
@@ -39,10 +39,12 @@ public class VideoViewModel extends AndroidViewModel {
     private VirtualControllerHandler virtualControllerHandler;
     private DJICodecManager mCodecManager;
     private LiveStreamHandler liveStreamHandler;
+    private GimbalHandler gimbalHandler;
 
-    public MutableLiveData<Integer> isOnMission = new MutableLiveData<Integer>();
+    public MutableLiveData<Integer> currentMode = new MutableLiveData<Integer>();
     public MutableLiveData<Float> currentAltitude = new MutableLiveData<Float>();
     public MutableLiveData<Integer> currentLatency = new MutableLiveData<Integer>();
+    public MutableLiveData<Boolean> hasMission = new MutableLiveData<>();
 
     public VideoViewModel(@NonNull Application application) {
         super(application);
@@ -51,8 +53,10 @@ public class VideoViewModel extends AndroidViewModel {
     public void init(Context context) {
         missionHandler = new WaypointMissionHandler(context);
         virtualControllerHandler = new VirtualControllerHandler(Drone.getInstance().isOnMission());
+        gimbalHandler = new GimbalHandler();
         mCodecManager = null;
-        isOnMission.postValue(Drone.getInstance().getMode());
+        currentMode.postValue(Drone.getInstance().getMode());
+        //hasMission.postValue((missionHandler.hasUploaded()));
         listenMissionEnd();
         updateAltitude();
     }
@@ -61,12 +65,6 @@ public class VideoViewModel extends AndroidViewModel {
         if (mCodecManager != null) {
             mCodecManager.cleanSurface();
             mCodecManager = null;
-        }
-    }
-
-    public void stopMission() {
-        if (Drone.getInstance().isOnMission()) {
-            missionHandler.stopWaypointMission(DRONE_MODE_FREE, () -> { });
         }
     }
 
@@ -111,37 +109,69 @@ public class VideoViewModel extends AndroidViewModel {
                 public void onExecutionFinish(@Nullable DJIError djiError) {
                     if (!Drone.getInstance().isChasing()) {
                         Drone.getInstance().setMode(DRONE_MODE_FREE);
-                        isOnMission.postValue(Drone.getInstance().getMode());
+                        currentMode.postValue(Drone.getInstance().getMode());
                     }
                 }
             });
         }
     }
 
-    public void startChase() {
-        missionHandler.stopWaypointMission(DRONE_MODE_CHASE, new Callback() {
-            @Override
-            public void onComplete() {
-                isOnMission.postValue(Drone.getInstance().getMode());
-                initCommandReceiver();
-            }
-        });
+    public void startMission() {
+        if (!Drone.getInstance().isOnMission()) {
+            missionHandler.startWaypointMission(() -> currentMode.postValue(Drone.getInstance().getMode()));
+        } else {
+            stopMission();
+        }
     }
 
-    public void stopChase() {
+    public void stopMission() {
+        if (Drone.getInstance().isOnMission()) {
+            missionHandler.stopWaypointMission(DRONE_MODE_FREE, () -> {
+                currentMode.postValue(Drone.getInstance().getMode());
+                hasMission.postValue((missionHandler.hasUploaded()));
+            });            hasMission.postValue((missionHandler.hasUploaded()));
+            gimbalHandler.lookDown();
+        }
+    }
+
+    public void startChase() {
+        if (Drone.getInstance().isOnMission()) {
+            missionHandler.stopWaypointMission(DRONE_MODE_CHASE, () -> currentMode.postValue(Drone.getInstance().getMode()));
+            hasMission.postValue((missionHandler.hasUploaded()));
+            gimbalHandler.lookDown();
+        }
+        Drone.getInstance().setMode(DRONE_MODE_CHASE);
+        currentMode.postValue(Drone.getInstance().getMode());
+        Drone.getInstance().setListeningToCommands(true);
+    }
+
+    public void startFree() {
+        gimbalHandler.lookDown();
+        if (Drone.getInstance().isOnMission()) {
+            missionHandler.stopWaypointMission(DRONE_MODE_CHASE, () -> currentMode.postValue(Drone.getInstance().getMode()));
+            hasMission.postValue((missionHandler.hasUploaded()));
+            gimbalHandler.lookDown();
+        }
         Drone.getInstance().setMode(DRONE_MODE_FREE);
-        isOnMission.postValue(Drone.getInstance().getMode());
+        Drone.getInstance().setListeningToCommands(false);
+        currentMode.postValue(Drone.getInstance().getMode());
         virtualControllerHandler.stopMoving();
     }
 
-    public void startLand() {
-        virtualControllerHandler.startLand();
-    }
+    public void startLand() { virtualControllerHandler.startLand(); }
+
+    public void startTakeoff() {virtualControllerHandler.startTakeoff();}
 
     // For chase mode to listen to message queue for vX vY controller values
+    // Only single instance as ZeroMQ does not support multithreading
+    // Therefore, use a flag to decide whether to listen to commands and move
     public void initCommandReceiver() {
+        if (Drone.getInstance().isOnMission()) {
+            Drone.getInstance().setListeningToCommands(true);
+        }
+
         if (!AppConfiguration.CONTROLLER_IP_ADDRESS.isEmpty()) {
-            Thread subscribeThread = new Thread(new Runnable() {
+            Thread zmqThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
                     Log.e("Command Receiver", "Listening to Commands");
@@ -149,34 +179,44 @@ public class VideoViewModel extends AndroidViewModel {
                         // Socket to talk to clients
                         ZMQ.Socket socket = context.createSocket(SocketType.PULL);
                         socket.connect("tcp://" + AppConfiguration.CONTROLLER_IP_ADDRESS + ":5555");
-                        Log.e("ZeroMQ", "Listening to Host");
+                        Log.e("ZeroMQ", "Command Listener Opened");
                         long startTime = System.currentTimeMillis();
                         while (!Thread.currentThread().isInterrupted()) {
                             String message = new String(socket.recv(0));
-                            long currentTime =  System.currentTimeMillis();
-                            long latency = currentTime- startTime;
-                            startTime = currentTime;
-                            currentLatency.postValue((int) latency);
-                            Log.e("ZeroMQ", "Command Latency: " + latency + "ms");
-                            if (message.split(",").length > 1) {
-                                String vX = message.split(",")[0];
-                                String vY = message.split(",")[1];
-                                Log.i("ZeroMQ", "vX:" + vX + " vY: " + vY);
-                                if (Drone.getInstance().isChasing()) {
-                                    move(Float.parseFloat(vX), Float.parseFloat(vY));
-                                } else {
-                                    stopMoving();
-                                    return;
+                            // Dummy Message - Measure latency
+                            if (message.contains("Dummy")) {
+                                long currentTime = System.currentTimeMillis();
+                                long latency = currentTime - startTime;
+                                startTime = currentTime;
+                                currentLatency.postValue((int) latency);
+                                Log.e("ZeroMQ", "Command Latency: " + latency + "ms");
+                            }
+                            // Movement command
+                            if (Drone.getInstance().isListeningToCommands()) {
+                                if (message.split(",").length > 1) {
+                                    String vX = message.split(",")[0];
+                                    String vY = message.split(",")[1];
+                                    Log.i("ZeroMQ", "vX:" + vX + " vY: " + vY);
+                                    if (Drone.getInstance().isOnMission()) {
+                                        startChase();
+                                    }
+                                    if (Drone.getInstance().isChasing()) {
+                                        move(Float.parseFloat(vX), Float.parseFloat(vY));
+                                    } else {
+                                        stopMoving();
+                                    }
                                 }
                             }
                         }
+
+                        socket.close();
                     }
                     catch (Exception error) {
                         Log.e("ZeroMQ", error.getMessage());
                     }
                 }
             });
-            subscribeThread.start();
+            zmqThread.start();
         } else {
             Log.e("ZeroMQ", "Invalid Host IP Address");
         }
@@ -184,13 +224,6 @@ public class VideoViewModel extends AndroidViewModel {
 
     public DisplayService getDisplayService() {
         return DisplayService.Companion.getINSTANCE();
-    }
-
-    public void onConnectionFailedRtp() {
-        DisplayService displayService = getDisplayService();
-        if (displayService != null) {
-            displayService.stopStream();
-        }
     }
 
     public void startScreenMirror(String rtspURL, int resultCode, Intent data, int width, int height) {
@@ -216,4 +249,5 @@ public class VideoViewModel extends AndroidViewModel {
     private void updateAltitude() {
         virtualControllerHandler.getAltitude(currentAltitude);
     }
+
 }
