@@ -10,6 +10,7 @@
         <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/ic_baseline_check_circle_24.xml" value="0.1465" />
         <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/ic_baseline_control_camera_24.xml" value="0.1465" />
         <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/ic_baseline_explore_24.xml" value="0.1015" />
+        <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/ic_baseline_explore_24_black.xml" value="0.1565" />
         <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/ic_baseline_flight_land_24.xml" value="0.1465" />
         <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/ic_baseline_flight_takeoff_24.xml" value="0.3725" />
         <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/ic_baseline_keyboard_arrow_down_24.xml" value="0.1465" />
@@ -22,11 +23,23 @@
         <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/ic_baseline_mobile_screen_share_24.xml" value="0.1465" />
         <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/ic_baseline_save_alt_24.xml" value="0.1465" />
         <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/ic_baseline_settings_24.xml" value="0.1565" />
+        <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/ic_baseline_video_camera_back_24.xml" value="0.14" />
+        <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/ic_baseline_video_camera_back_24_black.xml" value="0.134" />
+        <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/ic_baseline_video_camera_front_24.xml" value="0.14" />
+        <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/ic_baseline_video_camera_front_24_black.xml" value="0.188" />
         <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/ic_launcher2_foreground.xml" value="0.1" />
         <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/land_btn.xml" value="0.1645" />
+        <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/mission_btn.xml" value="0.1565" />
+        <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/mission_btn_checked.xml" value="0.1565" />
         <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/round_btn.xml" value="0.2" />
         <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/round_btn_disable.xml" value="0.1815" />
         <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/round_button.xml" value="0.221" />
+        <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/rtmp_btn.xml" value="0.14" />
+        <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/rtmp_btn_checked.xml" value="0.14" />
+        <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/rtmp_btn_unchecked.xml" value="0.14" />
+        <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/rtsp_btn.xml" value="0.14" />
+        <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/rtsp_btn_checked.xml" value="0.14" />
+        <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/rtsp_btn_unchecked.xml" value="0.14" />
         <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/selector_back_button.xml" value="0.2" />
         <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/start_mission_btn.xml" value="0.247" />
         <entry key="..\:/Users/Admin/Documents/DJIAAPP2/DJIAAPP2/app/src/main/res/drawable/start_rtmp_btn.xml" value="0.1465" />

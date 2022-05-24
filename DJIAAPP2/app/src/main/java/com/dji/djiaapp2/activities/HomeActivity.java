@@ -1,15 +1,14 @@
 package com.dji.djiaapp2.activities;
 
 import static com.dji.djiaapp2.utils.AppConfiguration.CONTROLLER_IP_ADDRESS;
-import static com.dji.djiaapp2.utils.AppConfiguration.RTMPUrl;
-import static com.dji.djiaapp2.utils.AppConfiguration.SCREEN_MIRROR_RTSP_SERVER_ADDR;
-import static com.dji.djiaapp2.utils.AppConfiguration.maxSpeed;
+import static com.dji.djiaapp2.utils.AppConfiguration.RTMP_URL;
+import static com.dji.djiaapp2.utils.AppConfiguration.RTSP_URL;
+import static com.dji.djiaapp2.utils.AppConfiguration.MAX_SPEED;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -90,6 +89,11 @@ public class HomeActivity extends AppCompatActivity {
         homeViewModel.cleanUp();
     }
 
+    @Override
+    public void onBackPressed() {
+        this.finishAffinity();
+    }
+
     private void initUI() {
         uploadBtn = findViewById(R.id.uploadBtn);
         uploadBtn.setOnClickListener(view -> openFile());
@@ -133,54 +137,47 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void initSettings() {
-        settingsBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final View settings = LayoutInflater.from(HomeActivity.this).inflate(R.layout.settings, null);
-                AlertDialog.Builder alert = new AlertDialog.Builder(HomeActivity.this, R.style.AlertDialogCustom);
-                alert.setCancelable(false);
-                settings.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View view, MotionEvent motionEvent) {
-                        InputMethodManager imm = (InputMethodManager) getBaseContext().getSystemService(Context
-                                .INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(settings.getWindowToken(), 0);
-                        return true;
-                    }
-                });
-                final EditText controllerIP = settings.findViewById(R.id.controllerIP);
-                final EditText screenMirrorAddr = settings.findViewById(R.id.screenMirroRtspServer);
-                final EditText RTMPAddr = settings.findViewById(R.id.RTMPUrl);
-                final EditText maxSpd = settings.findViewById(R.id.maxSpeed);
+        settingsBtn.setOnClickListener(view -> {
+            final View settings = LayoutInflater.from(HomeActivity.this).inflate(R.layout.settings, null);
+            AlertDialog.Builder alert = new AlertDialog.Builder(HomeActivity.this, R.style.AlertDialogCustom);
+            alert.setCancelable(false);
+            settings.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    InputMethodManager imm = (InputMethodManager) getBaseContext().getSystemService(Context
+                            .INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(settings.getWindowToken(), 0);
+                    return true;
+                }
+            });
+            final EditText controllerIP = settings.findViewById(R.id.controllerIP);
+            final EditText screenMirrorAddr = settings.findViewById(R.id.screenMirroRtspServer);
+            final EditText RTMPAddr = settings.findViewById(R.id.RTMPUrl);
+            final EditText maxSpd = settings.findViewById(R.id.maxSpeed);
 
-                controllerIP.setText(CONTROLLER_IP_ADDRESS);
-                screenMirrorAddr.setText(SCREEN_MIRROR_RTSP_SERVER_ADDR);
-                RTMPAddr.setText(RTMPUrl);
-                maxSpd.setText(Integer.toString(maxSpeed));
+            controllerIP.setText(CONTROLLER_IP_ADDRESS);
+            screenMirrorAddr.setText(RTSP_URL);
+            RTMPAddr.setText(RTMP_URL);
+            maxSpd.setText(Integer.toString(MAX_SPEED));
 
-                alert.setTitle("Settings");
-                alert.setView(settings);
+            alert.setTitle("Settings");
+            alert.setView(settings);
 
-                alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        AppConfiguration.setControllerIpAddress(controllerIP.getText().toString());
-                        AppConfiguration.setScreenMirrorServerAddr(screenMirrorAddr.getText().toString());
-                        AppConfiguration.setRTMPUrl(RTMPAddr.getText().toString());
-                        try{
-                            AppConfiguration.setMaxSpeed(Integer.parseInt(maxSpd.getText().toString().trim()));
-                        } catch (NumberFormatException error) {
-                            // ignore input
-                        }
-                    }
-                });
+            alert.setPositiveButton("OK", (dialog, whichButton) -> {
+                AppConfiguration.setControllerIpAddress(controllerIP.getText().toString());
+                AppConfiguration.setScreenMirrorServerAddress(screenMirrorAddr.getText().toString());
+                AppConfiguration.setRtmpUrl(RTMPAddr.getText().toString());
+                try{
+                    AppConfiguration.setMaxSpeed(Integer.parseInt(maxSpd.getText().toString().trim()));
+                } catch (NumberFormatException error) {
+                    // ignore input
+                }
+            });
 
-                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        // do nothing, no update values
-                    }
-                });
-                alert.show();
-            }
+            alert.setNegativeButton("Cancel", (dialog, whichButton) -> {
+                // do nothing, no update values
+            });
+            alert.show();
         });
     }
 

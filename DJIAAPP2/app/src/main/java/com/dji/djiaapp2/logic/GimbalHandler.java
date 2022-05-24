@@ -2,14 +2,11 @@ package com.dji.djiaapp2.logic;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 
 import com.dji.djiaapp2.MApplication;
 
-import dji.common.flightcontroller.FlightControllerState;
 import dji.common.gimbal.CapabilityKey;
 import dji.common.gimbal.GimbalMode;
-import dji.common.gimbal.GimbalState;
 import dji.common.gimbal.Rotation;
 import dji.common.gimbal.RotationMode;
 import dji.common.util.DJIParamMinMaxCapability;
@@ -30,7 +27,7 @@ public class GimbalHandler {
         if (product != null && product.isConnected()) {
             if (product instanceof Aircraft) {
                 gimbal = ((Aircraft) product).getGimbal();
-                gimbal.setMode(GimbalMode.FREE, djiError -> {
+                gimbal.setMode(GimbalMode.YAW_FOLLOW, djiError -> {
                     lookDown();
                     if (djiError != null) {
                         Log.e("GimbalHandler", djiError.getDescription());

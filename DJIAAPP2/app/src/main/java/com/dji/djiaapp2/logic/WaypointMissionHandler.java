@@ -22,7 +22,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import dji.common.error.DJIError;
-import dji.common.flightcontroller.LocationCoordinate3D;
 import dji.common.mission.waypoint.Waypoint;
 import dji.common.mission.waypoint.WaypointMission;
 import dji.common.mission.waypoint.WaypointMissionFinishedAction;
@@ -47,10 +46,9 @@ public class WaypointMissionHandler {
     private boolean hasUploaded = false;
 
     // Settings for waypoint mission behaviour
-    private WaypointMissionFinishedAction mFinishedAction = WaypointMissionFinishedAction.NO_ACTION;
-    private WaypointMissionHeadingMode mHeadingMode = WaypointMissionHeadingMode.TOWARD_POINT_OF_INTEREST;
-    private float maxSpeed = 15.0f;
-    private LocationCoordinate3D currentLocation;
+    private final WaypointMissionFinishedAction mFinishedAction = WaypointMissionFinishedAction.NO_ACTION;
+    private final WaypointMissionHeadingMode mHeadingMode = WaypointMissionHeadingMode.AUTO;
+    private final float maxSpeed = 15.0f;
 
     public WaypointMissionHandler(Context context) {
         app = context;
@@ -85,12 +83,16 @@ public class WaypointMissionHandler {
                     case XmlPullParser.END_TAG:
                         endTag = xpp.getName();
                         if (endTag.equals("coordinates")) {
-                            // Waypoint(lat, long, al)
+                            // Waypoint(lat, long, al, speed, radius)
                             String[] coordinates = tagValue.split((","));
-                            Waypoint waypoint = new Waypoint(Double.parseDouble(coordinates[1]),
-                                    Double.parseDouble(coordinates[0]),
-                                    Float.parseFloat(coordinates[2]));
-                            waypoints.add(waypoint);
+                            if (coordinates.length > 4) {
+                                Waypoint waypoint = new Waypoint(Double.parseDouble(coordinates[1]),
+                                        Double.parseDouble(coordinates[0]),
+                                        Float.parseFloat(coordinates[2]));
+                                waypoint.speed = Float.parseFloat(coordinates[3]);
+                                waypoint.cornerRadiusInMeters = Float.parseFloat(coordinates[4]);
+                                waypoints.add(waypoint);
+                            }
                         }
                         break;
                 }
@@ -114,10 +116,10 @@ public class WaypointMissionHandler {
 
             waypointMissionBuilder.finishedAction(mFinishedAction)
                     .headingMode(mHeadingMode)
-                    .autoFlightSpeed(AppConfiguration.maxSpeed)
+                    .autoFlightSpeed(AppConfiguration.MAX_SPEED)
                     .maxFlightSpeed(maxSpeed)
                     .setGimbalPitchRotationEnabled(false)
-                    .flightPathMode(WaypointMissionFlightPathMode.NORMAL);
+                    .flightPathMode(WaypointMissionFlightPathMode.CURVED);
 
             // Load and upload mission to drone
             DJIError error = waypointMissionOperator.loadMission(waypointMissionBuilder.build());

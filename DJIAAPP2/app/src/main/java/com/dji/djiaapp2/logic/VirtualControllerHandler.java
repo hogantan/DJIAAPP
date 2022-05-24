@@ -4,9 +4,6 @@ import static com.dji.djiaapp2.utils.AppConfiguration.DRONE_MODE_FREE;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.MutableLiveData;
-
 import com.dji.djiaapp2.MApplication;
 import com.dji.djiaapp2.models.Drone;
 import com.dji.djiaapp2.utils.AppConfiguration;
@@ -30,35 +27,32 @@ import dji.sdk.products.Aircraft;
 
 public class VirtualControllerHandler {
 
+    private static final String TAG = "Virtual Controller";
+
     private FlightController flightController;
     private Timer mSendVirtualStickDataTimer;
     private SendVirtualStickDataTask mSendVirtualStickDataTask;
 
-    float verticalJoyControlMaxSpeed = 2;
-    float yawJoyControlMaxSpeed = 30;
+    private final float verticalJoyControlMaxSpeed = 2;
+    private final float yawJoyControlMaxSpeed = 30;
 
-    public VirtualControllerHandler(boolean isOnMission) {
+    public VirtualControllerHandler() {
         BaseProduct product = MApplication.getProductInstance();
         if (product != null && product.isConnected()) {
             if (product instanceof Aircraft) {
                 this.flightController = ((Aircraft) product).getFlightController();
-
                 this.flightController.setRollPitchControlMode(RollPitchControlMode.VELOCITY);
                 this.flightController.setYawControlMode(YawControlMode.ANGULAR_VELOCITY);
                 this.flightController.setVerticalControlMode(VerticalControlMode.VELOCITY);
                 this.flightController.setRollPitchCoordinateSystem(FlightCoordinateSystem.BODY);
                 this.flightController.setVirtualStickAdvancedModeEnabled(true);
-                this.enable(true);
+                this.flightController.setVirtualStickModeEnabled(true, djiError -> {
+                    if (djiError != null){
+                        Log.e(TAG, djiError.getDescription());
+                    }
+                });
             }
         }
-    }
-
-    public void enable(boolean isEnabled) {
-        this.flightController.setVirtualStickModeEnabled(isEnabled, djiError -> {
-            if (djiError != null){
-                Log.e("VirtualController", djiError.getDescription());
-            }
-        });
     }
 
     public void moveRightStick(float pX, float pY) {
@@ -68,8 +62,8 @@ public class VirtualControllerHandler {
             return;
         }
 
-        Drone.getInstance().setmPitch(pX * AppConfiguration.maxSpeed);
-        Drone.getInstance().setmRoll(pY * AppConfiguration.maxSpeed);
+        Drone.getInstance().setmPitch(pX * AppConfiguration.MAX_SPEED);
+        Drone.getInstance().setmRoll(pY * AppConfiguration.MAX_SPEED);
 
         if (null == mSendVirtualStickDataTimer) {
             mSendVirtualStickDataTask = new SendVirtualStickDataTask();
@@ -96,8 +90,8 @@ public class VirtualControllerHandler {
     }
 
     public void move(float x, float y) {
-        Drone.getInstance().setmPitch(x * AppConfiguration.maxSpeed);
-        Drone.getInstance().setmRoll(y * AppConfiguration.maxSpeed);
+        Drone.getInstance().setmPitch(x * AppConfiguration.MAX_SPEED);
+        Drone.getInstance().setmRoll(y * AppConfiguration.MAX_SPEED);
 
         if (null == mSendVirtualStickDataTimer) {
             mSendVirtualStickDataTask = new SendVirtualStickDataTask();
@@ -117,8 +111,10 @@ public class VirtualControllerHandler {
 
     public void startLand() {
         if (Drone.getInstance().getMode() == DRONE_MODE_FREE) {
-            flightController.startLanding(djiError -> {
-
+            flightController.startGoHome(djiError -> {
+                if (djiError != null) {
+                    Log.e(TAG, djiError.getDescription());
+                }
             });
         }
     }
@@ -126,7 +122,7 @@ public class VirtualControllerHandler {
     public void startTakeoff() {
         this.flightController.startTakeoff(djiError2 -> {
             if (djiError2 != null) {
-                Log.e("VirtualController", djiError2.getDescription());
+                Log.e(TAG, djiError2.getDescription());
             }
         });
     }
@@ -144,13 +140,7 @@ public class VirtualControllerHandler {
         }
     }
 
-    public void getAltitude(MutableLiveData<Float> currentAlt)
-    {
-        flightController.setStateCallback(new FlightControllerState.Callback() {
-            @Override
-            public void onUpdate(@NonNull FlightControllerState flightControllerState) {
-                currentAlt.postValue(flightControllerState.getAircraftLocation().getAltitude());
-            }
-        });
+    public void onUpdate(FlightControllerState.Callback callback) {
+        flightController.setStateCallback(callback);
     }
 }

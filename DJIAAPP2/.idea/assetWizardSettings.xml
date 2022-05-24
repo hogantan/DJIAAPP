@@ -329,8 +329,8 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="color" value="f3f3f3" />
-                            <entry key="outputName" value="ic_baseline_explore_24" />
+                            <entry key="color" value="1b1b1b" />
+                            <entry key="outputName" value="ic_baseline_explore_24_black" />
                             <entry key="sourceFile" value="C:\Users\Admin\Downloads\Android-FPVDemo-master\Android-FPVDemo-master\FPVDemo" />
                           </map>
                         </option>

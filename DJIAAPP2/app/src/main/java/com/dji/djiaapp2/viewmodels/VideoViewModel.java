@@ -5,7 +5,6 @@ import static com.dji.djiaapp2.utils.AppConfiguration.DRONE_MODE_FREE;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -19,31 +18,30 @@ import com.dji.djiaapp2.logic.VirtualControllerHandler;
 import com.dji.djiaapp2.logic.WaypointMissionHandler;
 import com.dji.djiaapp2.models.Drone;
 import com.dji.djiaapp2.utils.AppConfiguration;
-import com.dji.djiaapp2.screenmirror.DisplayService;
+import com.pedro.rtplibrary.view.OpenGlView;
 
 import org.zeromq.SocketType;
 import org.zeromq.ZContext;
 import org.zeromq.ZMQ;
 
 import dji.common.error.DJIError;
+import dji.common.flightcontroller.FlightControllerState;
+import dji.common.flightcontroller.LocationCoordinate3D;
 import dji.common.mission.waypoint.WaypointMissionDownloadEvent;
 import dji.common.mission.waypoint.WaypointMissionExecutionEvent;
 import dji.common.mission.waypoint.WaypointMissionUploadEvent;
-import dji.sdk.camera.VideoFeeder;
-import dji.sdk.codec.DJICodecManager;
 import dji.sdk.mission.waypoint.WaypointMissionOperatorListener;
 
 public class VideoViewModel extends AndroidViewModel {
     
     private WaypointMissionHandler missionHandler;
     private VirtualControllerHandler virtualControllerHandler;
-    private DJICodecManager mCodecManager;
     private LiveStreamHandler liveStreamHandler;
     private GimbalHandler gimbalHandler;
 
     public MutableLiveData<Integer> currentMode = new MutableLiveData<Integer>();
     public MutableLiveData<Float> currentAltitude = new MutableLiveData<Float>();
-    public MutableLiveData<Integer> currentLatency = new MutableLiveData<Integer>();
+    public MutableLiveData<Double> currentVelocity = new MutableLiveData<Double>();
     public MutableLiveData<Boolean> hasMission = new MutableLiveData<>();
 
     public VideoViewModel(@NonNull Application application) {
@@ -52,27 +50,22 @@ public class VideoViewModel extends AndroidViewModel {
 
     public void init(Context context) {
         missionHandler = new WaypointMissionHandler(context);
-        virtualControllerHandler = new VirtualControllerHandler(Drone.getInstance().isOnMission());
+        virtualControllerHandler = new VirtualControllerHandler();
         gimbalHandler = new GimbalHandler();
-        mCodecManager = null;
-        currentMode.postValue(Drone.getInstance().getMode());
-        //hasMission.postValue((missionHandler.hasUploaded()));
-        listenMissionEnd();
-        updateAltitude();
-    }
+        liveStreamHandler = new LiveStreamHandler();
 
-    public void cleanSurface() {
-        if (mCodecManager != null) {
-            mCodecManager.cleanSurface();
-            mCodecManager = null;
-        }
+        currentMode.postValue(Drone.getInstance().getMode());
+        listenMissionEnd();
+        onUpdate();
     }
 
     public void moveLeftStick(float x, float y) {
+        stopMission();
         virtualControllerHandler.moveLeftStick(x, y);
     }
 
     public void moveRightStick(float x, float y) {
+        stopMission();
         virtualControllerHandler.moveRightStick(x, y);
     }
 
@@ -107,6 +100,8 @@ public class VideoViewModel extends AndroidViewModel {
 
                 @Override
                 public void onExecutionFinish(@Nullable DJIError djiError) {
+                    gimbalHandler.lookDown();
+                    hasMission.postValue((missionHandler.hasUploaded()));
                     if (!Drone.getInstance().isChasing()) {
                         Drone.getInstance().setMode(DRONE_MODE_FREE);
                         currentMode.postValue(Drone.getInstance().getMode());
@@ -129,12 +124,13 @@ public class VideoViewModel extends AndroidViewModel {
             missionHandler.stopWaypointMission(DRONE_MODE_FREE, () -> {
                 currentMode.postValue(Drone.getInstance().getMode());
                 hasMission.postValue((missionHandler.hasUploaded()));
-            });            hasMission.postValue((missionHandler.hasUploaded()));
+            });
             gimbalHandler.lookDown();
         }
     }
 
     public void startChase() {
+        gimbalHandler.lookDown();
         if (Drone.getInstance().isOnMission()) {
             missionHandler.stopWaypointMission(DRONE_MODE_CHASE, () -> currentMode.postValue(Drone.getInstance().getMode()));
             hasMission.postValue((missionHandler.hasUploaded()));
@@ -180,17 +176,8 @@ public class VideoViewModel extends AndroidViewModel {
                         ZMQ.Socket socket = context.createSocket(SocketType.PULL);
                         socket.connect("tcp://" + AppConfiguration.CONTROLLER_IP_ADDRESS + ":5555");
                         Log.e("ZeroMQ", "Command Listener Opened");
-                        long startTime = System.currentTimeMillis();
                         while (!Thread.currentThread().isInterrupted()) {
                             String message = new String(socket.recv(0));
-                            // Dummy Message - Measure latency
-                            if (message.contains("Dummy")) {
-                                long currentTime = System.currentTimeMillis();
-                                long latency = currentTime - startTime;
-                                startTime = currentTime;
-                                currentLatency.postValue((int) latency);
-                                Log.e("ZeroMQ", "Command Latency: " + latency + "ms");
-                            }
                             // Movement command
                             if (Drone.getInstance().isListeningToCommands()) {
                                 if (message.split(",").length > 1) {
@@ -222,32 +209,58 @@ public class VideoViewModel extends AndroidViewModel {
         }
     }
 
-    public DisplayService getDisplayService() {
-        return DisplayService.Companion.getINSTANCE();
-    }
-
-    public void startScreenMirror(String rtspURL, int resultCode, Intent data, int width, int height) {
-        DisplayService displayService = getDisplayService();
-        if (displayService != null) {
-            displayService.prepareStreamRtp(rtspURL, resultCode, data);
-            displayService.startStreamRtp(rtspURL, width, height);
-        }
-    }
-
-    public void initRTMP(VideoFeeder.VideoDataListener listener) {
-        liveStreamHandler = new LiveStreamHandler(listener);
+    public void initLiveVideoFeed(Context context, OpenGlView openGlView) {
+        liveStreamHandler.init(context, openGlView);
     }
 
     public void startRTMP() {
-        liveStreamHandler.startStream();
+        liveStreamHandler.startRTMP();
     }
 
     public void stopRTMP() {
-        liveStreamHandler.stopStream();
+        liveStreamHandler.stopRTMP();
     }
 
-    private void updateAltitude() {
-        virtualControllerHandler.getAltitude(currentAltitude);
+    public void startRTSP() {
+        liveStreamHandler.startRTSP();
     }
 
+    public void stopRTSP() {
+        liveStreamHandler.stopRTSP();
+    }
+
+    public void cleanUp() {
+        liveStreamHandler.cleanUp();
+    }
+
+    public void onUpdate() {
+        virtualControllerHandler.onUpdate(new FlightControllerState.Callback() {
+            @Override
+            public void onUpdate(@NonNull FlightControllerState flightControllerState) {
+                //Telemetry
+                LocationCoordinate3D location = flightControllerState.getAircraftLocation();
+                currentAltitude.postValue(location.getAltitude());
+                double lat = location.getLatitude();
+                double longi = location.getLongitude();
+                float alt = location.getAltitude();
+                Log.i("(GCS)Telemetry", lat + " " + longi + " " + alt);
+
+                // Bitrate
+                if (liveStreamHandler != null) {
+                    if (liveStreamHandler.isStreamingRTMP()) {
+                        Log.i("(GCS)RTMP Bitrate", String.valueOf(liveStreamHandler.getRTMPBitrate()) + " kbps");
+                    }
+                }
+
+                // Current Speed
+                float vX = flightControllerState.getVelocityX();
+                float vY = flightControllerState.getVelocityY();
+                float vZ = flightControllerState.getVelocityZ();
+                double v = Math.round(Math.sqrt((vX * vX) + (vY * vY) + (vZ * vZ)) * 100.00) / 100.00;
+
+                currentVelocity.postValue((v));
+                Log.i("(GCS)Drone Speed", String.valueOf(v));
+            }
+        });
+    }
 }

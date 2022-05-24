@@ -63,7 +63,7 @@
         android:id="@+id/controllerLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="88dp"
+        android:layout_marginStart="32dp"
         android:fontFamily="@font/allerta"
         android:text="Controller IP:"
         android:textColor="@color/colorPrimary"
@@ -110,5 +110,6 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/rtmpLabel"
         app:layout_constraintTop_toBottomOf="@+id/rtmpLabel" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

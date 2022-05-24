@@ -2,23 +2,17 @@ package com.dji.djiaapp2.activities;
 
 import static com.dji.djiaapp2.utils.AppConfiguration.DRONE_MODE_FREE;
 import static com.dji.djiaapp2.utils.AppConfiguration.DRONE_MODE_SEARCH;
-import static com.dji.djiaapp2.utils.AppConfiguration.SCREEN_MIRROR_RTSP_SERVER_ADDR;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Point;
-import android.graphics.SurfaceTexture;
 import android.graphics.drawable.ColorDrawable;
-import android.media.MediaCodec;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.MenuItem;
-import android.view.TextureView;
+import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -37,13 +31,7 @@ import com.dji.djiaapp2.R;
 import com.dji.djiaapp2.models.Drone;
 import com.dji.djiaapp2.utils.OnScreenJoystick;
 import com.dji.djiaapp2.viewmodels.VideoViewModel;
-import com.dji.djiaapp2.screenmirror.DisplayService;
-import com.pedro.rtsp.rtsp.RtspClient;
-import com.pedro.rtsp.utils.ConnectCheckerRtsp;
-
-import dji.midware.usb.P3.UsbAccessoryService;
-import dji.sdk.camera.VideoFeeder;
-import dji.sdk.codec.DJICodecManager;
+import com.pedro.rtplibrary.view.OpenGlView;
 
 /**
  * For getting live video feed to show on application as well as
@@ -51,37 +39,23 @@ import dji.sdk.codec.DJICodecManager;
  * Provides virtual joystick controls to control drone movement
  */
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-public class VideoActivity extends AppCompatActivity
-        implements ConnectCheckerRtsp, TextureView.SurfaceTextureListener {
-
-    private static final String TAG = VideoActivity.class.getName();
-    private final int REQUEST_CODE_STREAM = 179; //random num
-    private final int REQUEST_CODE_RECORD = 180; //random num
-
-    protected TextureView mVideoSurface = null;
+public class VideoActivity extends AppCompatActivity implements SurfaceHolder.Callback {
     private ImageView mode;
     private ToggleButton commandListener;
     private Button landBtn;
     private Button takeoffBtn;
-    private Button mirrorScreenBtn;
-    private Button startRTMPBtn;
-    private Button startMissionBtn;
-    private ToggleButton toggleUI;
+    private ToggleButton startRTSPBtn;
+    private ToggleButton startRTMPBtn;
+    private ToggleButton startMissionBtn;
     private ToggleButton toggleLayoutBtn;
     private OnScreenJoystick joystickRight;
     private OnScreenJoystick joystickLeft;
     private ProgressDialog loadingBar;
     private TextView altitude;
-    private TextView latency;
+    private TextView velocity;
 
     private VideoViewModel videoViewModel;
-    protected VideoFeeder.VideoDataListener mReceivedVideoDataListener = null;
-    private RtspClient rtspClient;
-
-    // Codec for video live view
-    protected DJICodecManager mCodecManager = null;
-    private MediaCodec.BufferInfo videoInfo = new MediaCodec.BufferInfo();
-    private long presentTimeUs = 0L;
+    private OpenGlView openGlView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,30 +70,11 @@ public class VideoActivity extends AppCompatActivity
 
         initUI();
         subscribeToViewModel();
-        initRtspClient();
         videoViewModel.initCommandReceiver();
-
-        // The callback for receiving the raw H264 video data for camera live view
-        mReceivedVideoDataListener = new VideoFeeder.VideoDataListener() {
-            @Override
-            public void onReceive(byte[] videoBuffer, int size) {
-                if (mCodecManager != null) {
-                    mCodecManager.sendDataToDecoder(videoBuffer,
-                            size,UsbAccessoryService.VideoStreamSource.Camera.getIndex());
-                }
-            }
-        };
-        videoViewModel.initRTMP(mReceivedVideoDataListener);
     }
 
     private void initUI() {
         mode = findViewById(R.id.mode);
-
-        mVideoSurface = findViewById(R.id.primaryVideoFeed);
-
-        if (null != mVideoSurface) {
-            mVideoSurface.setSurfaceTextureListener(this);
-        }
 
         commandListener = findViewById(R.id.chaseBtn);
         commandListener.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -134,7 +89,6 @@ public class VideoActivity extends AppCompatActivity
         joystickLeft = findViewById(R.id.joystickLeft);
 
         joystickRight.setJoystickListener((joystick, pX, pY) -> {
-            videoViewModel.stopMission();
             if(Math.abs(pX) < 0.02 ){
                 pX = 0;
             }
@@ -145,7 +99,6 @@ public class VideoActivity extends AppCompatActivity
         });
 
         joystickLeft.setJoystickListener((joystick, pX, pY) -> {
-            videoViewModel.stopMission();
             if(Math.abs(pX) < 0.02 ){
                 pX = 0;
             }
@@ -164,29 +117,45 @@ public class VideoActivity extends AppCompatActivity
         toggleLayoutBtn = findViewById(R.id.toggleLayoutBtn);
         toggleLayout();
 
-        toggleUI = findViewById(R.id.toggleUIBtn);
-        toggleUI();
+        startRTMPBtn = findViewById(R.id.rtmp_btn);
+        startRTMPBtn.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                videoViewModel.startRTMP();
+            } else {
+                videoViewModel.stopRTMP();
+            }
+        });
 
-        startRTMPBtn = findViewById(R.id.startrtmp_btn);
-        startRTMPBtn.setOnClickListener(view -> videoViewModel.startRTMP());
+        startRTSPBtn = findViewById(R.id.rtsp_btn);
+        startRTSPBtn.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                videoViewModel.startRTSP();
+            } else {
+                videoViewModel.stopRTSP();
+            }
+        });
 
         startMissionBtn = findViewById(R.id.startmission_btn);
-        startMissionBtn.setOnClickListener(view -> videoViewModel.startMission());
+        startMissionBtn.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                videoViewModel.startMission();
+            } else {
+                videoViewModel.stopMission();
+            }
+        });
 
         loadingBar = new ProgressDialog(VideoActivity.this);
 
         altitude = findViewById(R.id.altitude);
-        latency = findViewById(R.id.latency);
+        velocity = findViewById(R.id.velocity);
+        openGlView = findViewById(R.id.liveVideoFeed);
+        openGlView.getHolder().addCallback(this);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().show();
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle("");
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        }
-
-        if (null != mVideoSurface) {
-            mVideoSurface.setSurfaceTextureListener(this);
         }
 
         if (getIntent().getExtras().getBoolean("hasUploaded")) {
@@ -201,6 +170,12 @@ public class VideoActivity extends AppCompatActivity
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        startRTSPBtn.setChecked(false);
+        startRTMPBtn.setChecked(false);
+        startMissionBtn.setChecked(false);
+        commandListener.setChecked(false);
+        toggleLayoutBtn.setChecked(false);
+
         if (intent.getExtras().getBoolean("hasUploaded")) {
             startMissionBtn.setEnabled(true);
             startMissionBtn.setVisibility(View.VISIBLE);
@@ -208,31 +183,6 @@ public class VideoActivity extends AppCompatActivity
             startMissionBtn.setEnabled(false);
             startMissionBtn.setVisibility(View.INVISIBLE);
         }
-    }
-
-    @Override
-    public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-        Log.e(TAG, "onSurfaceTextureAvailable");
-        if (mCodecManager == null) {
-            mCodecManager = new DJICodecManager(this, surface, width, height);
-            initScreenMirror();
-        }
-    }
-
-    @Override
-    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-        Log.i(TAG, "onSurfaceTextureSizeChanged");
-    }
-
-    @Override
-    public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-        Log.i(TAG,"onSurfaceTextureDestroyed");
-        videoViewModel.cleanSurface();
-        return false;
-    }
-
-    @Override
-    public void onSurfaceTextureUpdated(SurfaceTexture surface) {
     }
 
     @Override
@@ -291,7 +241,7 @@ public class VideoActivity extends AppCompatActivity
                     joystickRight.setVisibility(View.VISIBLE);
                     joystickLeft.setVisibility(View.VISIBLE);
                     commandListener.setVisibility(View.INVISIBLE);
-                    mirrorScreenBtn.setVisibility(View.INVISIBLE);
+                    startRTSPBtn.setVisibility(View.INVISIBLE);
                     startRTMPBtn.setVisibility(View.INVISIBLE);
                     startMissionBtn.setVisibility(View.INVISIBLE);
 
@@ -301,7 +251,7 @@ public class VideoActivity extends AppCompatActivity
                     joystickRight.setVisibility(View.INVISIBLE);
                     joystickLeft.setVisibility(View.INVISIBLE);
                     commandListener.setVisibility(View.VISIBLE);
-                    mirrorScreenBtn.setVisibility(View.VISIBLE);
+                    startRTSPBtn.setVisibility(View.VISIBLE);
                     startRTMPBtn.setVisibility(View.VISIBLE);
                     if (startMissionBtn.isEnabled()) {
                         startMissionBtn.setVisibility(View.VISIBLE);
@@ -311,39 +261,14 @@ public class VideoActivity extends AppCompatActivity
         });
     }
 
-    private void toggleUI() {
-        toggleUI.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    hideAllUI();
-                } else {
-                    showAllUI();
-                }
-            }
-        });
-    }
-
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(this, HomeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-        DisplayService displayService = videoViewModel.getDisplayService();
-        if (displayService.isStreaming()) {
-            displayService.stopStream();
-        }
-        videoViewModel.stopRTMP();
+        videoViewModel.cleanUp();
         Drone.getInstance().setMode(DRONE_MODE_FREE);
         Drone.getInstance().setListeningToCommands(false);
         startActivity(intent);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        DisplayService displayService = videoViewModel.getDisplayService();
-        if (displayService != null && !displayService.isStreaming() && !displayService.isRecording()) {
-            stopService(new Intent(this, DisplayService.class));
-        }
     }
 
     private void subscribeToViewModel() {
@@ -351,6 +276,7 @@ public class VideoActivity extends AppCompatActivity
             if (i == DRONE_MODE_FREE) {
                 mode.setImageResource(R.drawable.ic_baseline_control_camera_24);
                 toggleLayoutBtn.setVisibility(View.VISIBLE);
+                startMissionBtn.setChecked(false);
             } else if (i == DRONE_MODE_SEARCH) {
                 mode.setImageResource(R.drawable.ic_baseline_location_on_24);
                 toggleLayoutBtn.setVisibility(View.VISIBLE);
@@ -358,6 +284,7 @@ public class VideoActivity extends AppCompatActivity
                 mode.setImageResource(R.drawable.ic_baseline_location_searching_24);
                 commandListener.setChecked(true);
                 toggleLayoutBtn.setVisibility(View.INVISIBLE);
+                startMissionBtn.setChecked(false);
             }
         });
 
@@ -365,8 +292,8 @@ public class VideoActivity extends AppCompatActivity
             altitude.setText("H: " + String.valueOf(i) + "m");
         });
 
-        videoViewModel.currentLatency.observe(this, i -> {
-            latency.setText("P: " + String.valueOf(i) + "ms");
+        videoViewModel.currentVelocity.observe(this, i -> {
+            velocity.setText("V: " + String.valueOf(i) + "ms");
         });
 
         videoViewModel.hasMission.observe(this, i -> {
@@ -381,233 +308,16 @@ public class VideoActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (data != null && (requestCode == REQUEST_CODE_STREAM
-                || requestCode == REQUEST_CODE_RECORD && resultCode == Activity.RESULT_OK)) {
-            videoViewModel.startScreenMirror(SCREEN_MIRROR_RTSP_SERVER_ADDR
-                    , resultCode, data, 1920, getOutputHeight());
-        }
-    }
-
-    private void initScreenMirror() {
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        mirrorScreenBtn = findViewById(R.id.screenmirror_btn);
-        mirrorScreenBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                DisplayService displayService = videoViewModel.getDisplayService();
-                if (displayService != null) {
-                    if (!displayService.isStreaming()) {
-                        startActivityForResult(displayService.sendIntent(), REQUEST_CODE_STREAM);
-                    } else {
-                        displayService.stopStream();
-                    }
-                }
-            }
-        });
-
-        DisplayService displayService = videoViewModel.getDisplayService();
-        if (displayService == null) {
-            startService(new Intent(this, DisplayService.class));
-        }
-    }
-
-    private void hideAllUI() {
-        toggleLayoutBtn.setChecked(false);
-        mode.setVisibility(View.INVISIBLE);
-        commandListener.setVisibility(View.INVISIBLE);
-        landBtn.setVisibility(View.INVISIBLE);
-        takeoffBtn.setVisibility(View.INVISIBLE);
-        joystickLeft.setVisibility(View.INVISIBLE);
-        joystickRight.setVisibility(View.INVISIBLE);
-        toggleLayoutBtn.setVisibility(View.INVISIBLE);
-        mirrorScreenBtn.setVisibility(View.INVISIBLE);
-        startRTMPBtn.setVisibility(View.INVISIBLE);
-        startMissionBtn.setVisibility(View.INVISIBLE);
-
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
-        hideSystemBars();
-    }
-
-    private void showAllUI() {
-        mode.setVisibility(View.VISIBLE);
-        commandListener.setVisibility(View.VISIBLE);
-        toggleLayoutBtn.setVisibility(View.VISIBLE);
-        mirrorScreenBtn.setVisibility(View.VISIBLE);
-        startRTMPBtn.setVisibility(View.VISIBLE);
-        toggleLayoutBtn.setVisibility(View.VISIBLE);
-        if (startMissionBtn.isEnabled()) {
-            startMissionBtn.setVisibility(View.VISIBLE);
-        }
-
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().show();
-        }
-        showSystemBars();
-    }
-
-    private void showSystemBars() {
-        View decorView = getWindow().getDecorView();
-        // Show the status bar.
-        decorView.setSystemUiVisibility(View.VISIBLE);
-    }
-
-    private void hideSystemBars() {
-        View decorView = getWindow().getDecorView();
-        // Hide the status bar.
-        int uiOptions = View.SYSTEM_UI_FLAG_LOW_PROFILE
-        | View.SYSTEM_UI_FLAG_FULLSCREEN
-        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-        decorView.setSystemUiVisibility(uiOptions);
-    }
-
-    private int getScreenWidth() {
-        Point metrics = new Point();
-        getWindowManager().getDefaultDisplay().getRealSize(metrics);
-        return metrics.x;
-    }
-
-    private int getScreenHeight() {
-        Point metrics = new Point();
-        getWindowManager().getDefaultDisplay().getRealSize(metrics);
-        return metrics.y;
-    }
-
-    private int getOutputHeight() {
-        float ratio = (float) getScreenWidth()/getScreenHeight();
-        return (int) (1920 / ratio);
-    }
-
-    private void initRtspClient() {
-        rtspClient = new RtspClient(new ConnectCheckerRtsp() {
-            @Override
-            public void onConnectionStartedRtsp(@NonNull String s) {
-                Log.e(TAG, "connection success");
-            }
-
-            @Override
-            public void onConnectionSuccessRtsp() {
-                Log.e(TAG, "connection success");
-            }
-
-            @Override
-            public void onConnectionFailedRtsp(String reason) {
-
-            }
-
-            @Override
-            public void onNewBitrateRtsp(long bitrate) {
-
-            }
-
-            @Override
-            public void onDisconnectRtsp() {
-
-            }
-
-            @Override
-            public void onAuthErrorRtsp() {
-
-            }
-
-            @Override
-            public void onAuthSuccessRtsp() {
-
-            }
-        });
+    public void surfaceCreated(SurfaceHolder surfaceHolder) {
     }
 
     @Override
-    public void onAuthErrorRtsp() {
+    public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
+        videoViewModel.initLiveVideoFeed(this, openGlView);
     }
 
     @Override
-    public void onAuthSuccessRtsp() {
+    public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
+        videoViewModel.cleanUp();
     }
-
-    @Override
-    public void onConnectionFailedRtsp(@NonNull String s) {
-    }
-
-    @Override
-    public void onConnectionStartedRtsp(@NonNull String s) {
-    }
-
-    @Override
-    public void onConnectionSuccessRtsp() {
-    }
-
-    @Override
-    public void onDisconnectRtsp() {
-    }
-
-    @Override
-    public void onNewBitrateRtsp(long l) {
-    }
-
-
-    // To Explore: Send raw video to RTSP server directly
-    // Currently unable to get keyframes/missing pps
-    /*
-    private void startRawStream(byte[] videoBuffer, int size) {
-        videoInfo.size = size;
-        videoInfo.offset = 0;
-        videoInfo.flags = MediaCodec.BUFFER_FLAG_PARTIAL_FRAME;
-        videoInfo.presentationTimeUs = System.nanoTime() / 1000 - presentTimeUs;
-        int naluType = UtilsKt.getVideoStartCodeSize(ByteBuffer.wrap(videoBuffer));
-        naluType = videoBuffer[naluType] & 0x1f;
-        //First keyframe received and you start stream.
-        // Change conditional as you want but stream must start with a keyframe
-        if (naluType == 7 && !rtspClient.isStreaming()) {
-            videoInfo.flags = MediaCodec.BUFFER_FLAG_KEY_FRAME;
-            Pair<ByteBuffer, ByteBuffer> videoData = decodeSpsPpsFromBuffer(videoBuffer, size);
-            if (videoData != null) {
-                presentTimeUs = System.nanoTime() / 1000;
-                ByteBuffer newSps = videoData.first;
-                ByteBuffer newPps = videoData.second;
-                rtspClient.setVideoInfo(newSps, newPps, null);
-                rtspClient.setOnlyVideo(true);
-                rtspClient.connect("rtsp://10.255.252.78:8554/test");
-            } else {
-                Log.e(TAG, "Error to extract video data");
-            }
-        }
-        ByteBuffer h264Buffer = ByteBuffer.wrap(videoBuffer);
-        rtspClient.sendVideo(h264Buffer, videoInfo);
-    }
-
-    private Pair<ByteBuffer, ByteBuffer> decodeSpsPpsFromBuffer(byte[] csd, int length) {
-        byte[] mSPS = null, mPPS = null;
-        int i = 0;
-        int spsIndex = -1;
-        int ppsIndex = -1;
-        while (i < length - 4) {
-            if (csd[i] == 0 && csd[i + 1] == 0 && csd[i + 2] == 0 && csd[i + 3] == 1) {
-                if (spsIndex == -1) {
-                    spsIndex = i;
-                } else {
-                    ppsIndex = i;
-                    break;
-                }
-            }
-            i++;
-        }
-        if (spsIndex != -1 && ppsIndex != -1) {
-            mSPS = new byte[ppsIndex];
-            System.arraycopy(csd, spsIndex, mSPS, 0, ppsIndex);
-            mPPS = new byte[length - ppsIndex];
-            System.arraycopy(csd, ppsIndex, mPPS, 0, length - ppsIndex);
-        }
-        if (mSPS != null && mPPS != null) {
-            return new Pair<>(ByteBuffer.wrap(mSPS), ByteBuffer.wrap(mPPS));
-        }
-        return null;
-    }
-     */
 }
