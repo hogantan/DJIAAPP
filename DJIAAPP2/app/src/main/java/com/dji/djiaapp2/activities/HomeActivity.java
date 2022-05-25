@@ -124,12 +124,12 @@ public class HomeActivity extends AppCompatActivity {
                 }
             });
             final EditText controllerIP = settings.findViewById(R.id.controllerIP);
-            final EditText screenMirrorAddr = settings.findViewById(R.id.screenMirroRtspServer);
+            final EditText RTSPAddr = settings.findViewById(R.id.RTSPUrl);
             final EditText RTMPAddr = settings.findViewById(R.id.RTMPUrl);
             final EditText maxSpd = settings.findViewById(R.id.maxSpeed);
 
             controllerIP.setText(CONTROLLER_IP_ADDRESS);
-            screenMirrorAddr.setText(RTSP_URL);
+            RTSPAddr.setText(RTSP_URL);
             RTMPAddr.setText(RTMP_URL);
             maxSpd.setText(Integer.toString(MAX_SPEED));
 
@@ -138,7 +138,7 @@ public class HomeActivity extends AppCompatActivity {
 
             alert.setPositiveButton("OK", (dialog, whichButton) -> {
                 AppConfiguration.setControllerIpAddress(controllerIP.getText().toString());
-                AppConfiguration.setScreenMirrorServerAddress(screenMirrorAddr.getText().toString());
+                AppConfiguration.setRtspUrl(RTSPAddr.getText().toString());
                 AppConfiguration.setRtmpUrl(RTMPAddr.getText().toString());
                 try{
                     AppConfiguration.setMaxSpeed(Integer.parseInt(maxSpd.getText().toString().trim()));

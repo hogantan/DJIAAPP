@@ -21,17 +21,17 @@
         app:layout_constraintTop_toTopOf="@+id/controllerLabel" />
 
     <EditText
-        android:id="@+id/screenMirroRtspServer"
+        android:id="@+id/RTSPUrl"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
         android:gravity="top"
         android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@+id/screenMirrorLabel"
+        app:layout_constraintBottom_toBottomOf="@+id/rtspLabel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.016"
-        app:layout_constraintStart_toEndOf="@+id/screenMirrorLabel"
-        app:layout_constraintTop_toTopOf="@+id/screenMirrorLabel" />
+        app:layout_constraintStart_toEndOf="@+id/rtspLabel"
+        app:layout_constraintTop_toTopOf="@+id/rtspLabel" />
 
     <EditText
         android:id="@+id/RTMPUrl"
@@ -73,12 +73,12 @@
         app:layout_constraintVertical_bias="0.107" />
 
     <TextView
-        android:id="@+id/screenMirrorLabel"
+        android:id="@+id/rtspLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="36dp"
         android:fontFamily="@font/allerta"
-        android:text="RTSP (Mirror):"
+        android:text="RTSP:"
         android:textColor="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="@+id/controllerLabel"
         app:layout_constraintHorizontal_bias="0.0"
@@ -91,12 +91,12 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="36dp"
         android:fontFamily="@font/allerta"
-        android:text="RTMP (Raw):"
+        android:text="RTMP:"
         android:textColor="@color/colorPrimary"
-        app:layout_constraintEnd_toStartOf="@+id/screenMirroRtspServer"
+        app:layout_constraintEnd_toStartOf="@+id/RTSPUrl"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/screenMirrorLabel"
-        app:layout_constraintTop_toBottomOf="@+id/screenMirrorLabel" />
+        app:layout_constraintStart_toStartOf="@+id/rtspLabel"
+        app:layout_constraintTop_toBottomOf="@+id/rtspLabel" />
 
     <TextView
         android:id="@+id/droneSpeedLabel"

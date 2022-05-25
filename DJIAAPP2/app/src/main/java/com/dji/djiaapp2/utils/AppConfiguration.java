@@ -43,7 +43,7 @@ public class AppConfiguration {
         }
     }
 
-    public static void setScreenMirrorServerAddress(String ip) {
+    public static void setRtspUrl(String ip) {
         if (!ip.isEmpty()) {
             RTSP_URL = ip.trim();
         }
