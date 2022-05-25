@@ -13,6 +13,9 @@ import com.dji.djiaapp2.logic.Callback;
 import com.dji.djiaapp2.logic.SafetyHandler;
 import com.dji.djiaapp2.logic.WaypointMissionHandler;
 
+/**
+ * ViewModel for home activity
+ */
 public class HomeViewModel extends AndroidViewModel {
     private WaypointMissionHandler waypointMissionHandler;
     private SafetyHandler safetyHandler;

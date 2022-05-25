@@ -2,6 +2,7 @@ package com.dji.djiaapp2.viewmodels;
 
 import static com.dji.djiaapp2.utils.AppConfiguration.DRONE_MODE_CHASE;
 import static com.dji.djiaapp2.utils.AppConfiguration.DRONE_MODE_FREE;
+import static com.dji.djiaapp2.utils.AppConfiguration.GCS_TAG;
 
 import android.app.Application;
 import android.content.Context;
@@ -32,6 +33,11 @@ import dji.common.mission.waypoint.WaypointMissionExecutionEvent;
 import dji.common.mission.waypoint.WaypointMissionUploadEvent;
 import dji.sdk.mission.waypoint.WaypointMissionOperatorListener;
 
+/**
+ * ViewModel for video activity
+ * This is where the ZMQ listener logic is
+ * as well as logging of key information
+ */
 public class VideoViewModel extends AndroidViewModel {
     
     private WaypointMissionHandler missionHandler;
@@ -233,6 +239,7 @@ public class VideoViewModel extends AndroidViewModel {
         liveStreamHandler.cleanUp();
     }
 
+    // Logging of key information
     public void onUpdate() {
         virtualControllerHandler.onUpdate(new FlightControllerState.Callback() {
             @Override
@@ -243,12 +250,12 @@ public class VideoViewModel extends AndroidViewModel {
                 double lat = location.getLatitude();
                 double longi = location.getLongitude();
                 float alt = location.getAltitude();
-                Log.i("(GCS)Telemetry", lat + " " + longi + " " + alt);
+                Log.i(GCS_TAG, "Telemetry " + lat + " " + longi + " " + alt);
 
                 // Bitrate
                 if (liveStreamHandler != null) {
                     if (liveStreamHandler.isStreamingRTMP()) {
-                        Log.i("(GCS)RTMP Bitrate", String.valueOf(liveStreamHandler.getRTMPBitrate()) + " kbps");
+                        Log.i(GCS_TAG, "RTMP Bitrate " + String.valueOf(liveStreamHandler.getRTMPBitrate()) + " kbps");
                     }
                 }
 
@@ -259,7 +266,7 @@ public class VideoViewModel extends AndroidViewModel {
                 double v = Math.round(Math.sqrt((vX * vX) + (vY * vY) + (vZ * vZ)) * 100.00) / 100.00;
 
                 currentVelocity.postValue((v));
-                Log.i("(GCS)Drone Speed", String.valueOf(v));
+                Log.i(GCS_TAG, "Drone Speed " + String.valueOf(v));
             }
         });
     }

@@ -22,9 +22,11 @@ import dji.sdk.flightcontroller.FlightController;
 import dji.sdk.products.Aircraft;
 
 /**
- * For handling virtual manual control of drone (virtual joystick logic)
+ * For handling virtual control of drone such as:
+ * 1. Taking off
+ * 2. Landing
+ * 3. Moving via joysticks / autonomously
  */
-
 public class VirtualControllerHandler {
 
     private static final String TAG = "Virtual Controller";

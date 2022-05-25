@@ -18,8 +18,7 @@ import dji.sdk.sdkmanager.DJISDKManager;
 
 /**
  * Handles the connection logic when the application is launched
- * Establishes registration with DJI Mobile SDK then connection
- * with the drone
+ * Establishes registration with DJI Mobile SDK then connection with the drone
  */
 public class ConnectionHandler {
     private static final String TAG = "Connection Handler";

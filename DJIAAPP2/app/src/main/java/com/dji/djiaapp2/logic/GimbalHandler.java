@@ -37,6 +37,7 @@ public class GimbalHandler {
         }
     }
 
+    // Camera to look vertically down (top - down angle)
     public void lookDown() {
         Number angle = ((DJIParamMinMaxCapability) (gimbal.getCapabilities().get(CapabilityKey.ADJUST_PITCH))).getMin();
 

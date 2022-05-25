@@ -29,6 +29,10 @@ import com.dji.djiaapp2.viewmodels.ConnectionViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * To establish connection with drone
+ * Only opened on entry of application (cannot be returned to after going pass this activity)
+ */
 public class ConnectionActivity extends AppCompatActivity {
 
     private static final String[] REQUIRED_PERMISSION_LIST = new String[]{
@@ -87,10 +91,7 @@ public class ConnectionActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Checks if there is any missing permissions, and
-     * requests runtime permission if needed.
-     */
+    // Checks if there is any missing permissions, and requests runtime permission if needed.
     private void checkAndRequestPermissions() {
         // Check for permissions
         for (String eachPermission : REQUIRED_PERMISSION_LIST) {
@@ -107,28 +108,6 @@ public class ConnectionActivity extends AppCompatActivity {
                     REQUEST_PERMISSION_CODE);
         }
 
-    }
-
-    /**
-     * Result of runtime permission request
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        // Check for granted permission and remove from missing list
-        if (requestCode == REQUEST_PERMISSION_CODE) {
-            for (int i = grantResults.length - 1; i >= 0; i--) {
-                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                    missingPermission.remove(permissions[i]);
-                }
-            }
-        }
-        // If there is enough permission, we will start the registration
-        if (missingPermission.isEmpty()) {
-            connectionViewModel.startRegistration(getApplicationContext());
-        }
     }
 
     private void launchApp() {
@@ -177,5 +156,26 @@ public class ConnectionActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+
+    // Result of runtime permission request
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        // Check for granted permission and remove from missing list
+        if (requestCode == REQUEST_PERMISSION_CODE) {
+            for (int i = grantResults.length - 1; i >= 0; i--) {
+                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                    missingPermission.remove(permissions[i]);
+                }
+            }
+        }
+        // If there is enough permission, we will start the registration
+        if (missingPermission.isEmpty()) {
+            connectionViewModel.startRegistration(getApplicationContext());
+        }
     }
 }

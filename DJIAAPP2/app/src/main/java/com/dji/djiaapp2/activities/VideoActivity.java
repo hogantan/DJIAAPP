@@ -35,8 +35,10 @@ import com.pedro.rtplibrary.view.OpenGlView;
 
 /**
  * For getting live video feed to show on application as well as
- * streaming it via RTSP
- * Provides virtual joystick controls to control drone movement
+ * streaming it via RTSP / RTMP
+ * Provides virtual controls to control drone movement and
+ * a command listener to listen to a server for commands (for autonomous moving)
+ * Start waypoint mission that has been uploaded in HomeActivity
  */
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class VideoActivity extends AppCompatActivity implements SurfaceHolder.Callback {
@@ -167,6 +169,72 @@ public class VideoActivity extends AppCompatActivity implements SurfaceHolder.Ca
         }
     }
 
+    private void toggleLayout() {
+        toggleLayoutBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    landBtn.setVisibility(View.VISIBLE);
+                    takeoffBtn.setVisibility(View.VISIBLE);
+                    joystickRight.setVisibility(View.VISIBLE);
+                    joystickLeft.setVisibility(View.VISIBLE);
+                    commandListener.setVisibility(View.INVISIBLE);
+                    startRTSPBtn.setVisibility(View.INVISIBLE);
+                    startRTMPBtn.setVisibility(View.INVISIBLE);
+                    startMissionBtn.setVisibility(View.INVISIBLE);
+
+                } else {
+                    landBtn.setVisibility(View.INVISIBLE);
+                    takeoffBtn.setVisibility(View.INVISIBLE);
+                    joystickRight.setVisibility(View.INVISIBLE);
+                    joystickLeft.setVisibility(View.INVISIBLE);
+                    commandListener.setVisibility(View.VISIBLE);
+                    startRTSPBtn.setVisibility(View.VISIBLE);
+                    startRTMPBtn.setVisibility(View.VISIBLE);
+                    if (startMissionBtn.isEnabled()) {
+                        startMissionBtn.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        });
+    }
+
+    private void subscribeToViewModel() {
+        videoViewModel.currentMode.observe(this, i -> {
+            if (i == DRONE_MODE_FREE) {
+                mode.setImageResource(R.drawable.ic_baseline_control_camera_24);
+                toggleLayoutBtn.setVisibility(View.VISIBLE);
+                startMissionBtn.setChecked(false);
+            } else if (i == DRONE_MODE_SEARCH) {
+                mode.setImageResource(R.drawable.ic_baseline_location_on_24);
+                toggleLayoutBtn.setVisibility(View.VISIBLE);
+            } else {
+                mode.setImageResource(R.drawable.ic_baseline_location_searching_24);
+                commandListener.setChecked(true);
+                toggleLayoutBtn.setVisibility(View.INVISIBLE);
+                startMissionBtn.setChecked(false);
+            }
+        });
+
+        videoViewModel.currentAltitude.observe(this, i -> {
+            altitude.setText("H: " + String.valueOf(i) + "m");
+        });
+
+        videoViewModel.currentVelocity.observe(this, i -> {
+            velocity.setText("V: " + String.valueOf(i) + "ms");
+        });
+
+        videoViewModel.hasMission.observe(this, i -> {
+            if (i) {
+                startMissionBtn.setEnabled(true);
+                startMissionBtn.setVisibility(View.VISIBLE);
+            } else {
+                startMissionBtn.setEnabled(false);
+                startMissionBtn.setVisibility(View.INVISIBLE);
+            }
+        });
+    }
+
+    // This is called when returning from HomeActivity (i.e. when VideoActivity is reopened)
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -232,35 +300,6 @@ public class VideoActivity extends AppCompatActivity implements SurfaceHolder.Ca
         return super.onOptionsItemSelected(item);
     }
 
-    private void toggleLayout() {
-        toggleLayoutBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    landBtn.setVisibility(View.VISIBLE);
-                    takeoffBtn.setVisibility(View.VISIBLE);
-                    joystickRight.setVisibility(View.VISIBLE);
-                    joystickLeft.setVisibility(View.VISIBLE);
-                    commandListener.setVisibility(View.INVISIBLE);
-                    startRTSPBtn.setVisibility(View.INVISIBLE);
-                    startRTMPBtn.setVisibility(View.INVISIBLE);
-                    startMissionBtn.setVisibility(View.INVISIBLE);
-
-                } else {
-                    landBtn.setVisibility(View.INVISIBLE);
-                    takeoffBtn.setVisibility(View.INVISIBLE);
-                    joystickRight.setVisibility(View.INVISIBLE);
-                    joystickLeft.setVisibility(View.INVISIBLE);
-                    commandListener.setVisibility(View.VISIBLE);
-                    startRTSPBtn.setVisibility(View.VISIBLE);
-                    startRTMPBtn.setVisibility(View.VISIBLE);
-                    if (startMissionBtn.isEnabled()) {
-                        startMissionBtn.setVisibility(View.VISIBLE);
-                    }
-                }
-            }
-        });
-    }
-
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(this, HomeActivity.class);
@@ -269,42 +308,6 @@ public class VideoActivity extends AppCompatActivity implements SurfaceHolder.Ca
         Drone.getInstance().setMode(DRONE_MODE_FREE);
         Drone.getInstance().setListeningToCommands(false);
         startActivity(intent);
-    }
-
-    private void subscribeToViewModel() {
-        videoViewModel.currentMode.observe(this, i -> {
-            if (i == DRONE_MODE_FREE) {
-                mode.setImageResource(R.drawable.ic_baseline_control_camera_24);
-                toggleLayoutBtn.setVisibility(View.VISIBLE);
-                startMissionBtn.setChecked(false);
-            } else if (i == DRONE_MODE_SEARCH) {
-                mode.setImageResource(R.drawable.ic_baseline_location_on_24);
-                toggleLayoutBtn.setVisibility(View.VISIBLE);
-            } else {
-                mode.setImageResource(R.drawable.ic_baseline_location_searching_24);
-                commandListener.setChecked(true);
-                toggleLayoutBtn.setVisibility(View.INVISIBLE);
-                startMissionBtn.setChecked(false);
-            }
-        });
-
-        videoViewModel.currentAltitude.observe(this, i -> {
-            altitude.setText("H: " + String.valueOf(i) + "m");
-        });
-
-        videoViewModel.currentVelocity.observe(this, i -> {
-            velocity.setText("V: " + String.valueOf(i) + "ms");
-        });
-
-        videoViewModel.hasMission.observe(this, i -> {
-            if (i) {
-                startMissionBtn.setEnabled(true);
-                startMissionBtn.setVisibility(View.VISIBLE);
-            } else {
-                startMissionBtn.setEnabled(false);
-                startMissionBtn.setVisibility(View.INVISIBLE);
-            }
-        });
     }
 
     @Override

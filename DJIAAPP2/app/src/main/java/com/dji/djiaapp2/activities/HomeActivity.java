@@ -34,7 +34,7 @@ import com.dji.djiaapp2.viewmodels.HomeViewModel;
 /**
  * For uploading and loading waypoint xml file to drone
  * Parses waypoint xml file and loads into drone
- * Can either start a waypoint mission or just jump to live camera view (without starting any mission)
+ * Modify settings such as server addresses and amx speed of drone
  */
 public class HomeActivity extends AppCompatActivity {
 
@@ -65,33 +65,6 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         initUI();
         subscribeToViewModel();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            // When file has been selected
-            case IMPORT_FILE_CODE:
-                if (resultCode == Activity.RESULT_OK ) {
-                    if(data != null)  {
-                        homeViewModel.uploadWaypointFile(data.getData(), getApplicationContext());
-                        initUploadingBar();
-                    }
-                }
-                break;
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        homeViewModel.cleanUp();
-    }
-
-    @Override
-    public void onBackPressed() {
-        this.finishAffinity();
     }
 
     private void initUI() {
@@ -193,6 +166,35 @@ public class HomeActivity extends AppCompatActivity {
         homeViewModel.hasUploaded.observe(this, isTrue -> {
             loadingBar.dismiss();
         });
+    }
+
+    // For returning from file browser page after selecting waypoint file
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            // When file has been selected
+            case IMPORT_FILE_CODE:
+                if (resultCode == Activity.RESULT_OK ) {
+                    if(data != null)  {
+                        homeViewModel.uploadWaypointFile(data.getData(), getApplicationContext());
+                        initUploadingBar();
+                    }
+                }
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        homeViewModel.cleanUp();
+    }
+
+    // Close application
+    @Override
+    public void onBackPressed() {
+        this.finishAffinity();
     }
 
 }

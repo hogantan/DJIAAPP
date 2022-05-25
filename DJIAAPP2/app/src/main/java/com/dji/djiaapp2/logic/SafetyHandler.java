@@ -12,9 +12,10 @@ import dji.sdk.flightcontroller.FlightController;
 import dji.sdk.products.Aircraft;
 
 /**
- * For safety behavior of drone
+ * For safety behavior of drone such as setting up geo-fence
+ * and failsafe behaviors (e.g. when controller loses connection to
+ * drone while flying)
  */
-
 public class SafetyHandler {
     private static final String TAG = "Safety Handler";
 

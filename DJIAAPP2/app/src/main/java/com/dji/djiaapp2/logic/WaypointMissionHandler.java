@@ -32,9 +32,10 @@ import dji.sdk.mission.waypoint.WaypointMissionOperator;
 import dji.sdk.sdkmanager.DJISDKManager;
 
 /**
- * For handling anything related to waypoint missions,
- * from parsing of waypoint xml file to building and
- * uploading mission to drone
+ * For handling anything related to waypoint missions such as:
+ * 1. Parsing waypoint file (xml)
+ * 2. Uploading mission to drone
+ * 3. Executing/stopping mission
  */
 public class WaypointMissionHandler {
     private static final String TAG = "Mission Handler";

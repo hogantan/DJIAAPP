@@ -34,6 +34,9 @@ public class AppConfiguration {
     // "Geo-Fencing" Setting
     public static int MAX_FLIGHT_RADIUS = 1000;
 
+    // GCS TAG
+    public static final String GCS_TAG = "GCS";
+
     public static void setControllerIpAddress(String ip) {
         if (!ip.isEmpty()) {
             CONTROLLER_IP_ADDRESS = ip.trim();

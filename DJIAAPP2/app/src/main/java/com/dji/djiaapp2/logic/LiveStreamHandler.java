@@ -1,5 +1,6 @@
 package com.dji.djiaapp2.logic;
 
+import static com.dji.djiaapp2.utils.AppConfiguration.GCS_TAG;
 import static com.dji.djiaapp2.utils.AppConfiguration.RTSP_URL;
 
 import android.content.Context;
@@ -26,9 +27,10 @@ import dji.sdk.sdkmanager.DJISDKManager;
 import dji.sdk.sdkmanager.LiveStreamManager;
 
 /**
- * This is for using DJI inbuilt RTMP live streaming
- * Requires internet connection on Android device as DJI Livestream SDK
- * requires internet
+ * Controls live video receiving from drone
+ * Two ways of streaming out live video:
+ * 1. DJI in-built livestreaming SDK (RTMP)
+ * 2. Custom livestream of raw video (RTSP)
  */
 public class LiveStreamHandler {
     private static final String TAG = "LiveStreamHandler";
@@ -77,7 +79,7 @@ public class LiveStreamHandler {
 
             @Override
             public void onNewBitrateRtsp(long bitrate) {
-                Log.i("(GCS)RTSP Bitrate", String.valueOf(bitrate / 100) + " kbps");
+                Log.i(GCS_TAG, "RTSP Bitrate " + String.valueOf(bitrate / 100) + " kbps");
             }
 
             @Override
