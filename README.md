@@ -33,6 +33,8 @@ This section provides a quickstart guide of using **DJIAAPP**. This quickstart g
 - DJI Drone (Mavic 2 Pro)
 - DJI Smart Controller
 
+After meeting the above requirements, follow the steps below:
+
 1. Download the apk [here](https://github.com/hogantan/DJIAAPP2/releases/tag/v1)
 2. Install apk in DJI Smart Controller
 3. Power on drone 
@@ -77,7 +79,9 @@ The following diagram illustrates the entire architecture of the entire system (
 
 ![connection](https://user-images.githubusercontent.com/65152263/170230391-e8ae7ba7-82ca-4d62-8835-6a9f2e961bbb.jpg)
 
-This is the landing page of **DJIAAPP** when the user first starts the application. It establishes connection with DJI's Mobile SDK as well as the DJI Drone. This activity is only opened upon launching the application, upon successfully connecting, this activity will not be able to returned to.
+This is the landing page of **DJIAAPP** when the user first starts the application. 
+
+It establishes connection with DJI's Mobile SDK as well as the DJI Drone. This activity is only opened upon launching the application.  Upon successfully connecting, this activity will not be able to returned to.
 
 #### Home Activity
 
@@ -125,6 +129,7 @@ This section explains the various logic in the `WaypointMissionhandler` class.
 
 Key Components:
 1. Parsing Waypoint Mission files 
+
 Parses a **XML** file and generates the various waypoints to be uploaded. Below is a sample of such file. 
 ```
 <?xml version="1.0" encoding="UTF-8"?>
@@ -157,14 +162,25 @@ Parses a **XML** file and generates the various waypoints to be uploaded. Below 
 </kml>
 
 ```
-Key point to note here is that the format under the coordinates tag is as follows: (latitude, longitude, altitude, speed, turn radius). Refer to [here](https://developer.dji.com/api-reference/android-api/Components/Missions/DJIWaypoint.html) for more information on what each field means. Setting turn radius allows for waypoint missions to be 'smoother' if turn radius = 0 then drone will pause at each waypoint before moving to the next.
+
+Key point to note here is that the format under the coordinates tag is as follows: (latitude, longitude, altitude, speed, turn radius). 
+
+Refer to [here](https://developer.dji.com/api-reference/android-api/Components/Missions/DJIWaypoint.html) for more information on what each field means. 
+
+Setting turn radius allows for waypoint missions to be 'smoother' if turn radius = 0 then drone will pause at each waypoint before moving to the next.
 
 2. Uploading Waypoint Mission 
-Uploads parse waypoints to the drone. Waypoints have to meet certain requirements in order to be successfully uploaded. See [here](https://developer.dji.com/api-reference/android-api/Components/SDKError/DJIError_DJIMissionManagerError.html?search=waypoint&i=7&#djierror_djisdkmissionerror_waypointerrorspeed_inline).
+
+Uploads parse waypoints to the drone. 
+
+Waypoints have to meet certain requirements in order to be successfully uploaded. See [here](https://developer.dji.com/api-reference/android-api/Components/SDKError/DJIError_DJIMissionManagerError.html?search=waypoint&i=7&#djierror_djisdkmissionerror_waypointerrorspeed_inline).
 > Note: That are instances where uploading of missions can fail most prominently due to poor connection / interference between DJI controller and the drone. If so, try readjusting or going nearer to drone. 
 
 3. Executing Waypoint Mission 
-Executes successfully uploaded waypoint mission. When executing mission, drone will start listening to commands. In other words, if a movement command is sent via the **Controller Script**, the drone will switch to Chase Mode. 
+
+Executes successfully uploaded waypoint mission. When executing mission, drone will start listening to commands. 
+
+In other words, if a movement command is sent via the **Controller Script**, the drone will switch to Chase Mode. 
 
 ### 2. Virtual Control
 ### 3. Live Streaming
