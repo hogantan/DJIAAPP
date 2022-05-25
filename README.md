@@ -127,8 +127,7 @@ This is the main page of **DJIAAPP** where most key features are located in name
 
 This section explains the various logic in the `WaypointMissionhandler` class. 
 
-Key Components:
-1. Parsing Waypoint Mission files 
+**1. Parsing Waypoint Mission files** 
 
 Parses a **XML** file and generates the various waypoints to be uploaded. Below is a sample of such file. 
 ```
@@ -169,14 +168,14 @@ Refer to [here](https://developer.dji.com/api-reference/android-api/Components/M
 
 Setting turn radius allows for waypoint missions to be 'smoother' if turn radius = 0 then drone will pause at each waypoint before moving to the next.
 
-2. Uploading Waypoint Mission 
+**2. Uploading Waypoint Mission** 
 
 Uploads parse waypoints to the drone. 
 
 Waypoints have to meet certain requirements in order to be successfully uploaded. See [here](https://developer.dji.com/api-reference/android-api/Components/SDKError/DJIError_DJIMissionManagerError.html?search=waypoint&i=7&#djierror_djisdkmissionerror_waypointerrorspeed_inline).
 > Note: That are instances where uploading of missions can fail most prominently due to poor connection / interference between DJI controller and the drone. If so, try readjusting or going nearer to drone. 
 
-3. Executing Waypoint Mission 
+**3. Executing Waypoint Mission** 
 
 Executes successfully uploaded waypoint mission. When executing mission, drone will start listening to commands. 
 
