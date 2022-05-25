@@ -1,8 +1,9 @@
+
 # DJIAAPP (GCS)
 
 Welcome to the DJI Android App (**DJIAAPP**) or Ground Control Station (**GCS**) application. **DJIAAP** is built primarily with the DJI Mobile Android SDK alongside various libraries. 
 
-DJIAAPP is designed to have the controlled DJI drone follow and track down a drone via the use of computer vision and a controller script.
+**DJIAAPP** is designed to have the controlled DJI drone follow and track down a drone via the use of computer vision and a controller script.
 
 Features that **DJIAAPP** offers:
 - Uploading and executing waypoint missions (linear or curved)
@@ -24,11 +25,11 @@ Compatibility (**DJIAAPP** has been tested using):
 2. [Architecture](#architecture)
 3. [Features](#third-example)
 4. [Testing](#fourth-examplehttpwwwfourthexamplecom)
-5. [Integrating with Deepstream and Controller](#fourth-examplehttpwwwfourthexamplecom)
+5. [Integrating with Deepstream and Controller Script](#fourth-examplehttpwwwfourthexamplecom)
 
 ## Quickstart
-This section provides a quickstart guide of using DJIAAPP. This quickstart guide assumes that the following requirements are met:
-- GPU Laptop that has Deepstream application (`dvd.py`) and Controller Script (`receiveampq3.py`)
+This section provides a quickstart guide of using **DJIAAPP**. This quickstart guide assumes that the following requirements are met:
+- GPU Laptop that has Deepstream application (`dvd.py`) and **Controller Script** (`receiveampq3.py`)
 - DJI Drone (Mavic 2 Pro)
 - DJI Smart Controller
 
@@ -43,7 +44,7 @@ $ cdgo
 $ ./djiaapp_init.sh
 ```
 6. Key in GPU Laptop password in new tab
-7. Open DJIAAPP on Smart Controller 
+7. Open **DJIAAPP** on Smart Controller 
 8. After connecting successfully to drone, hit the `Start` button on screen to go to video view
 9. Hit the `Start RTSP button` on screen and the drone's live video should be streaming to the RTSP server on the GPU Laptop
 > To check whether stream is received by the server, check RTSP server terminal on GPU Laptop if the RTSP stream is not opened, it could be that the IP address of the RTSP server is incorrect in which case hit back and change the IP address in the settings. 
@@ -51,12 +52,12 @@ $ ./djiaapp_init.sh
 11. Takeoff the drone by hitting the `Toggle UI button` then the  `Takeoff button` on screen
 12. Position the drone in desired position using `Virtual Joystick buttons` on screen 
 13. Turn on the command listener on DJIAAP by hitting the `Command Listener button`
-14. Launch Controller script on GPU Laptop by running the command: `$ py receiveamqp3.py` 
+14. Launch **Controller Script** on GPU Laptop by running the command: `$ py receiveamqp3.py` 
 15. Viola! Your drone should be following a drone in the video view! (or at least something else that has been detected)
 
 ## Architecture
 
-### Full Integrated System
+### Fully Integrated System
 The following diagram illustrates the entire architecture of the entire system (**DJIAAPP** + **Deepstream Application** + **Controller Script**).
 
 ![fullsystem](https://user-images.githubusercontent.com/65152263/170230251-f38f414e-34a8-4451-980f-08ba6ca643bd.png)
@@ -70,13 +71,13 @@ The following diagram illustrates the entire architecture of the entire system (
 
 ### DJIAAPP
 
-DJIAAPP follows the Model View ViewModel (MVVM) architecture. It contains only 3 activities namely: Connection, Home and Video. The following images depicts the various activities and provides information on each activity. 
+**DJIAAPP** follows the Model View ViewModel (MVVM) architecture. It contains only 3 activities namely: Connection, Home and Video. The following images depicts the various activities and provides information on each activity. 
 
 #### Connection Activity
 
 ![connection](https://user-images.githubusercontent.com/65152263/170230391-e8ae7ba7-82ca-4d62-8835-6a9f2e961bbb.jpg)
 
-This is the landing page of DJIAAPP when the user first starts the application. It establishes connection with DJI's Mobile SDK as well as the DJI Drone. This activity is only opened upon launching the application, upon successfully connecting, this activity will not be able to returned to.
+This is the landing page of **DJIAAPP** when the user first starts the application. It establishes connection with DJI's Mobile SDK as well as the DJI Drone. This activity is only opened upon launching the application, upon successfully connecting, this activity will not be able to returned to.
 
 #### Home Activity
 
@@ -87,7 +88,7 @@ UI Legend:
 2. `Upload Mission button` to open file browser and select mission to be uploaded
 3. `Settings button` to change certain settings such as RTSP server address, drone speed, etc. 
 
-This is the home page of DJIAAPP where users can tune certain settings as well as upload a waypoint mission. 
+This is the home page of **DJIAAPP** where users can tune certain settings as well as upload a waypoint mission. 
 
 #### Video Activity
 
@@ -102,7 +103,7 @@ VideoActivity (Toggled):
 UI Legend:
 1. `Back button` to return to [Home Activity](#home-activity)
 2. `RTSP button` to toggle start/stop of RTSP stream
-3. `Command Listener button` to toggle start/stop of listening to commands from the Controller Script
+3. `Command Listener button` to toggle start/stop of listening to commands from the **Controller Script**
 4. `RTMP button` to toggle start/stop of RTMP stream
 5. `Mission button` to toggle start/stop of executing waypoint mission
 > Note: this button is only present if user has uploaded a mission previously in [Home Activity](#home-activity).
@@ -113,7 +114,7 @@ UI Legend:
 10. `Land button` for drone to return to home and land
 11. `Takeoff button` for drone to takeoff 
 
-This is the main page of DJIAAPP where most key features are located in namely live streaming of live video feed and virtual control of drone.
+This is the main page of **DJIAAPP** where most key features are located in namely live streaming of live video feed and virtual control of drone.
 
 > Note: Both Home and Video activity are only created **once** that means that there is only one instance of each activity every time the application ran. That is both activities are able to switch/toggle between each other without having the need to create a new activity every time.
 
@@ -163,7 +164,7 @@ Uploads parse waypoints to the drone. Waypoints have to meet certain requirement
 > Note: That are instances where uploading of missions can fail most prominently due to poor connection / interference between DJI controller and the drone. If so, try readjusting or going nearer to drone. 
 
 3. Executing Waypoint Mission 
-Executes successfully uploaded waypoint mission. When executing mission, drone will start listening to commands. In other words, if a movement command is sent via the Controller Script, the drone will switch to Chase Mode. 
+Executes successfully uploaded waypoint mission. When executing mission, drone will start listening to commands. In other words, if a movement command is sent via the **Controller Script**, the drone will switch to Chase Mode. 
 
 ### 2. Virtual Control
 ### 3. Live Streaming
