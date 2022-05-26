@@ -56,7 +56,7 @@ Compatibility (**DJIAAPP** has been tested using):
 
 ## Quickstart
 This section provides a quickstart guide of using **DJIAAPP**. This quickstart guide assumes that the following requirements are met:
-- GPU Laptop that has **Deepstream application** (`dvd.py`), **Controller Script** (`receiveamqp3.py`), Android Debug Bridge ([adb](#https://developer.android.com/studio/command-line/adb))
+- GPU Laptop that has **Deepstream application** (`dvd.py`), **Controller Script** (`receiveamqp3.py`), Android Debug Bridge ([adb](https://developer.android.com/studio/command-line/adb))
 - DJI Drone (Mavic 2 Pro)
 - DJI Smart Controller
 
@@ -266,7 +266,7 @@ This section explains the various logic in the `LiveStreamHandler` class.
 This refers to the live video feed shown on **DJIAAPP** which is initialized when `VideoActivity` is opened/resumed. This is done by instantiating a `DJICodecManager`. 
 
 #### RTSP Stream
-This is done by using this [rtsp-rtmp-client-library](#https://github.com/pedroSG94/rtmp-rtsp-stream-client-java). 
+This is done by using this [rtsp-rtmp-client-library](https://github.com/pedroSG94/rtmp-rtsp-stream-client-java). 
 
 Essentially, this library helps to reencode DJI's raw video feed to be suited for streaming via RTSP. This is done in the `startRTSP()` method as it reencodes the raw video data it sends out the formatted video data to a RTSP server.
 
@@ -281,7 +281,7 @@ RTSP stream settings that can be adjusted are:
 Test with FFMPEG or Deepstream application to measure difference in latency as Deepstream application will incur some costs due to inference. FFMPEG command: `ffplay -fflags nobuffer -flags low_delay  rtsp://localhost:8554/test` 
 
 #### RTMP Stream
-This is done by using the [LiveStreamManager](#https://developer.dji.com/api-reference/android-api/Components/LiveStreamManager/DJILiveStreamManager.html) SDK that DJI provides. 
+This is done by using the [LiveStreamManager](https://developer.dji.com/api-reference/android-api/Components/LiveStreamManager/DJILiveStreamManager.html) SDK that DJI provides. 
 
 This is done in the `startRTMP()` method. 
 
