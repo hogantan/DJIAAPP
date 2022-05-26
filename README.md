@@ -55,7 +55,7 @@ Compatibility (**DJIAAPP** has been tested using):
 
 ## Quickstart
 This section provides a quickstart guide of using **DJIAAPP**. This quickstart guide assumes that the following requirements are met:
-- GPU Laptop that has **Deepstream application** (`dvd.py`),**Controller Script** (`receiveamqp3.py`), Android Debug Bridge ([adb](#https://developer.android.com/studio/command-line/adb))
+- GPU Laptop that has **Deepstream application** (`dvd.py`), **Controller Script** (`receiveamqp3.py`), Android Debug Bridge ([adb](#https://developer.android.com/studio/command-line/adb))
 - DJI Drone (Mavic 2 Pro)
 - DJI Smart Controller
 
@@ -83,7 +83,7 @@ After meeting the above requirements, follow the steps below:
 11. Takeoff the drone by hitting the [Toggle UI button](#video-activity) then the  [Takeoff button](#video-activity) on screen
 12. Position the drone in desired position using [Virtual Joystick buttons](#video-activity) on screen 
 13. Turn on the command listener on **DJIAAP** by hitting the [Command Listener button](#video-activity)
-14. Launch **Controller Script** on GPU Laptop by running the command: `$ py receiveamqp3.py` 
+14. Launch **Controller Script** on GPU Laptop by running the command: `py receiveamqp3.py` 
 15. Viola! Your drone should be following a drone in the video view! (or at least something else that has been detected)
 
 ## Architecture
@@ -111,6 +111,8 @@ The following diagram illustrates the entire architecture of the entire system (
 This is the landing page of **DJIAAPP** when the user first starts the application. 
 
 It establishes connection with DJI's Mobile SDK as well as the DJI Drone. This activity is only opened upon launching the application.  Upon successfully connecting, this activity will not be able to returned to.
+
+> Note: First installation and launch will require internet connection to register DJI SDK.
 
 #### Home Activity
 
@@ -154,7 +156,7 @@ This is the main page of **DJIAAPP** where most key features are located in name
 ## Features
 ### a. Waypoint Mission
 
-This section explains the various logic in the `WaypointMissionhandler` class. 
+This section explains the various logic in the `WaypointMissionHandler` class. 
 
 #### Parsing Waypoint Mission files
 
@@ -199,7 +201,7 @@ Setting turn radius allows for waypoint missions to be 'smoother' if turn radius
 
 #### Uploading Waypoint Mission
 
-Uploads parse waypoints to the drone. 
+Uploads parsed waypoints to the drone. 
 
 Waypoints have to meet certain requirements in order to be successfully uploaded. See [here](https://developer.dji.com/api-reference/android-api/Components/SDKError/DJIError_DJIMissionManagerError.html?search=waypoint&i=7&#djierror_djisdkmissionerror_waypointerrorspeed_inline).
 > Note: That are instances where uploading of missions can fail most prominently due to poor connection / interference between DJI controller and the drone. If so, try readjusting or going nearer to drone. 
@@ -333,7 +335,7 @@ For target drone waypoint movement, use DJI Pilot for linear waypoint missions. 
 
 ## Integrating with Deepstream and Controller Script
 
-### Minimizing Video Latency
+### Minimizing Latency
 
 Through the use of [adb port forwarding](https://medium.com/@godwinjoseph.k/adb-port-forwarding-and-reversing-d2bc71835d43), the Android device and the GPU Laptop can be setup in such a way where both devices are able to communicate with each other via wired connection. This requires the Android device to be connected to the GPU Laptop via USB-C to USB-A. Therefore, this eliminates the need for mobile hotspots when out on the field. See `djiaapp_init.sh`.
 
