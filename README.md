@@ -319,8 +319,8 @@ However, since we are using a Smart Controller we are able to setup the above wi
 ## Libraries
 
 This section includes useful libraries and repos.
-- [rtsp-rtmp-client](#https://github.com/pedroSG94/rtmp-rtsp-stream-client-java)
-- [simple-rtsp-server](#https://github.com/aler9/rtsp-simple-server)
-- [dji-sample-app](#https://github.com/dji-sdk/Mobile-SDK-Android)
-- [dji-docs](#https://developer.dji.com/mobile-sdk/documentation/introduction/index.html)
-- [dji-sdk](#https://developer.dji.com/api-reference/android-api/Components/SDKManager/DJISDKManager.html)
+- [rtsp-rtmp-client](https://github.com/pedroSG94/rtmp-rtsp-stream-client-java)
+- [simple-rtsp-server](https://github.com/aler9/rtsp-simple-server)
+- [dji-sample-app](https://github.com/dji-sdk/Mobile-SDK-Android)
+- [dji-docs](https://developer.dji.com/mobile-sdk/documentation/introduction/index.html)
+- [dji-sdk](https://developer.dji.com/api-reference/android-api/Components/SDKManager/DJISDKManager.html)
