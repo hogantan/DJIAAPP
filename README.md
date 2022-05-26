@@ -360,7 +360,7 @@ This section includes useful libraries and repos.
 ## FAQ
 1. Why is Android Studio building fail due to Manifest error?
 
-Go to `build.gradle`(Module) and change compiledSdkVersion and targetSdkVersion to 30. Then go to `AndroidManifest.xml` and click on Merged Manifest (located beside Text tab below) and insert `android:exported="true"` to services that missing it. Return back to `build.gradle` and SdkVersions to 32. 
+Go to `build.gradle`(Module) and change compiledSdkVersion and targetSdkVersion to 30. Then go to `AndroidManifest.xml` and click on Merged Manifest (located beside Text tab below) and insert `android:exported="true"` to services that are missing it. Return back to `build.gradle` and SdkVersions to 32. 
 
 2. Why is DJI Simulator not landing drone after pressing land button?
 
