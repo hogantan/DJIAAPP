@@ -3,6 +3,8 @@
 
 # DJIAAPP
 
+![logo](https://user-images.githubusercontent.com/65152263/170434766-01065003-9462-413c-a8b5-62146e8612c6.PNG)
+
 Welcome to the DJI Android App (**DJIAAPP**) !
 
 **DJIAAP** is built primarily with the DJI Mobile Android SDK alongside various libraries. 
@@ -231,17 +233,17 @@ When listening to movement commands and upon receiving commands, `VideoViewModel
 At this juncture, it is important to take note of the various modes of the drone that **DJIAAPP** sets. The drone will be on one of the below modes when running. 
 
 1. Free Mode (Green)
-![free](https://user-images.githubusercontent.com/65152263/170414346-914f9414-5572-4ecb-ac8f-1f5bd64b3a08.PNG)
+![free](https://user-images.githubusercontent.com/65152263/170435457-8e73be0c-3bfe-43df-8ed7-f86e0cfce141.PNG)
 
 Drone is able to move via the virtual joysticks and is not executing any mission or listening to commands from the **Controller Script**.
 
 2. Search Mode (Yellow)
-![search](https://user-images.githubusercontent.com/65152263/170414411-4c69ce1f-07b5-4ed2-a367-4539f9924ef6.PNG)
+![search](https://user-images.githubusercontent.com/65152263/170435486-54da6b01-4b5b-42d4-a2b7-9a6c5e11dd21.PNG)
 
 Drone is executing a mission and is listening to commands from the **Controller Script**.
 
 3. Chase Mode (Red)
-![chase](https://user-images.githubusercontent.com/65152263/170414429-8d5ded6e-ed8a-4b9a-9378-2f3f01e20ae4.PNG)
+![chase](https://user-images.githubusercontent.com/65152263/170435077-e3b0eaba-3611-494c-aeab-72d02e772900.PNG)
 
 Drone is listening to commands from the **Controller Script** and executing commands.
 
