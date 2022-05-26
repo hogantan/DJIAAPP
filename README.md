@@ -2,7 +2,9 @@
 
 # DJIAAPP (GCS)
 
-Welcome to the DJI Android App (**DJIAAPP**) or Ground Control Station (**GCS**) application. **DJIAAP** is built primarily with the DJI Mobile Android SDK alongside various libraries. 
+Welcome to the DJI Android App (**DJIAAPP**) !
+
+**DJIAAP** is built primarily with the DJI Mobile Android SDK alongside various libraries. 
 
 **DJIAAPP** is designed to have the controlled DJI drone follow and track down a drone via the use of computer vision and a controller script.
 
@@ -15,11 +17,8 @@ Features that **DJIAAPP** offers:
 - Geo-fencing
 
 Compatibility (**DJIAAPP** has been tested using): 
-- Mavic 2 Pro
-- Phantom 3 Pro
-- DJI Smart Controller (Android 5.0 and above)
-- Phantom 3 Controler + Sony Xperia XZ2
-
+- Mavic 2 Pro + DJI Smart Controller 
+- Phantom 3 Pro + Phantom 3 Controller + Sony Xperia XZ2
 
 ## Table of Content
 1. [Quickstart](#quickstart)
@@ -49,22 +48,24 @@ After meeting the above requirements, follow the steps below:
 1. Download the apk [here](https://github.com/hogantan/DJIAAPP2/releases/tag/v1)
 2. Install apk in DJI Smart Controller
 3. Power on drone 
-> Note: Where you power on the drone is where the drone's home point is. Therefore, power it on in a safe region for takeoff and landing
-4. Connect DJI Smart Controller to GPU Laptop
-5. Open terminal in GPU Laptop and run: 
-```
-$ cdgo
-$ ./djiaapp_init.sh
-```
-6. Key in GPU Laptop password in new tab
-7. Open **DJIAAPP** on Smart Controller 
+
+> Note: Where you power on the drone is where the drone's home point is. Therefore, power it on in a safe region for takeoff and landing.
+
+5. Connect DJI Smart Controller to GPU Laptop
+6. Open terminal in GPU Laptop and run:  `./djiaapp_init.sh`
+7. Initialize Deepstream application on GPU Laptop
+8. Open **DJIAAPP** on Smart Controller 
+
 > Note: DJIAAPP needs internet connection if launched for the first time of installation in order to register the DJI SDK.
-9. After connecting successfully to drone, hit the `Start` button on screen to go to video view
-10. Hit the `Start RTSP button` on screen and the drone's live video should be streaming to the RTSP server on the GPU Laptop
+
+9. After connecting successfully to drone, hit the [Start](#home-activity) button on screen to go to video view
+10. Hit the [RTSP button](#video-activity) on screen and the drone's live video should be streaming to the RTSP server on the GPU Laptop
+
 > To check whether stream is received by the server, check RTSP server terminal on GPU Laptop if the RTSP stream is not opened, it could be that the IP address of the RTSP server is incorrect in which case hit back and change the IP address in the settings. 
-11. Launch Deepstream on the GPU Laptop by running the command: `$ py dvd.py -i rtsp://localhost:8554/test` 
-12. Takeoff the drone by hitting the `Toggle UI button` then the  `Takeoff button` on screen
-13. Position the drone in desired position using `Virtual Joystick buttons` on screen 
+
+11. Launch Deepstream on the GPU Laptop by running the command: ` py dvd.py -i rtsp://localhost:8554/test` 
+12. Takeoff the drone by hitting the [Toggle UI button](#video-activity) then the  [Takeoff button](#video-activity) on screen
+13. Position the drone in desired position using [Virtual Joystick buttons](#video-activity) on screen 
 14. Turn on the command listener on DJIAAP by hitting the [Command Listener button](#video-activity)
 15. Launch **Controller Script** on GPU Laptop by running the command: `$ py receiveamqp3.py` 
 16. Viola! Your drone should be following a drone in the video view! (or at least something else that has been detected)
