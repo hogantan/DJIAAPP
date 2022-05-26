@@ -23,13 +23,14 @@ Compatibility (**DJIAAPP** has been tested using):
 ## Table of Content
 1. [Quickstart](#quickstart)
 2. [Architecture](#architecture)
-3. [Features](#third-example)
-4. [Testing](#fourth-examplehttpwwwfourthexamplecom)
-5. [Integrating with Deepstream and Controller Script](#fourth-examplehttpwwwfourthexamplecom)
+3. [Features](#features)
+4. [Testing](#testing)
+5. [Integrating with Deepstream and Controller Script](#integrating-with-deepstream-and-controller-script)
+6. [Libraries](#libraries)
 
 ## Quickstart
 This section provides a quickstart guide of using **DJIAAPP**. This quickstart guide assumes that the following requirements are met:
-- GPU Laptop that has Deepstream application (`dvd.py`) and **Controller Script** (`receiveampq3.py`)
+- GPU Laptop that has Deepstream application (`dvd.py`),**Controller Script** (`receiveampq3.py`), Android Debug Bridge ([adb](#https://developer.android.com/studio/command-line/adb))
 - DJI Drone (Mavic 2 Pro)
 - DJI Smart Controller
 
@@ -47,15 +48,16 @@ $ ./djiaapp_init.sh
 ```
 6. Key in GPU Laptop password in new tab
 7. Open **DJIAAPP** on Smart Controller 
-8. After connecting successfully to drone, hit the `Start` button on screen to go to video view
-9. Hit the `Start RTSP button` on screen and the drone's live video should be streaming to the RTSP server on the GPU Laptop
+> Note: DJIAAPP needs internet connection if launched for the first time of installation in order to register the DJI SDK.
+9. After connecting successfully to drone, hit the `Start` button on screen to go to video view
+10. Hit the `Start RTSP button` on screen and the drone's live video should be streaming to the RTSP server on the GPU Laptop
 > To check whether stream is received by the server, check RTSP server terminal on GPU Laptop if the RTSP stream is not opened, it could be that the IP address of the RTSP server is incorrect in which case hit back and change the IP address in the settings. 
-10. Launch Deepstream on the GPU Laptop by running the command: `$ py dvd.py -i rtsp://localhost:8554/test` 
-11. Takeoff the drone by hitting the `Toggle UI button` then the  `Takeoff button` on screen
-12. Position the drone in desired position using `Virtual Joystick buttons` on screen 
-13. Turn on the command listener on DJIAAP by hitting the `Command Listener button`
-14. Launch **Controller Script** on GPU Laptop by running the command: `$ py receiveamqp3.py` 
-15. Viola! Your drone should be following a drone in the video view! (or at least something else that has been detected)
+11. Launch Deepstream on the GPU Laptop by running the command: `$ py dvd.py -i rtsp://localhost:8554/test` 
+12. Takeoff the drone by hitting the `Toggle UI button` then the  `Takeoff button` on screen
+13. Position the drone in desired position using `Virtual Joystick buttons` on screen 
+14. Turn on the command listener on DJIAAP by hitting the `Command Listener button`
+15. Launch **Controller Script** on GPU Laptop by running the command: `$ py receiveamqp3.py` 
+16. Viola! Your drone should be following a drone in the video view! (or at least something else that has been detected)
 
 ## Architecture
 
@@ -127,7 +129,7 @@ This is the main page of **DJIAAPP** where most key features are located in name
 
 This section explains the various logic in the `WaypointMissionhandler` class. 
 
-**1. Parsing Waypoint Mission files** 
+#### Parsing Waypoint Mission files
 
 Parses a **XML** file and generates the various waypoints to be uploaded. Below is a sample of such file. 
 ```
@@ -168,20 +170,156 @@ Refer to [here](https://developer.dji.com/api-reference/android-api/Components/M
 
 Setting turn radius allows for waypoint missions to be 'smoother' if turn radius = 0 then drone will pause at each waypoint before moving to the next.
 
-**2. Uploading Waypoint Mission** 
+#### Uploading Waypoint Mission
 
 Uploads parse waypoints to the drone. 
 
 Waypoints have to meet certain requirements in order to be successfully uploaded. See [here](https://developer.dji.com/api-reference/android-api/Components/SDKError/DJIError_DJIMissionManagerError.html?search=waypoint&i=7&#djierror_djisdkmissionerror_waypointerrorspeed_inline).
 > Note: That are instances where uploading of missions can fail most prominently due to poor connection / interference between DJI controller and the drone. If so, try readjusting or going nearer to drone. 
 
-**3. Executing Waypoint Mission** 
+#### Executing Waypoint Mission
 
 Executes successfully uploaded waypoint mission. When executing mission, drone will start listening to commands. 
 
 In other words, if a movement command is sent via the **Controller Script**, the drone will switch to Chase Mode. 
 
 ### 2. Virtual Control
+This section explains the various logic in the `VirtualControllerHandler` and `VideoViewModel` classes.
+
+#### Taking off
+`VirtualControllerHandler` provides the `startTakeoff()` method to takeoff the drone. 
+
+#### Landing
+`VirtualControllerHandler` provides the `startLand()` method to land the drone by first returning to its home point and then landing. 
+
+#### Virtual Joysticks
+`VirtualControllerHandler` provides the `moveRightStick()` and `moveLeftStick()` methods to move the drone via virtual joysticks.
+
+> Note: DJI SDK requires movement commands to be send at a certain frequency in order for the drone to be responsive. Hence, a `TimerTask` is used to send these commands.
+ 
+#### Autonomous Control (Moving via Controller Script)
+`VideoViewModel` initializes a ZeroMQ command listener and pulls messages from the connected server. This  command listener is only initialized once as `Video Activity` is only created once. 
+
+>Note: ZeroMQ is not threadsafe so for simplicity it is only initialized once and we use flags to determine whether to listen to movement commands. 
+
+When listening to movement commands and upon receiving commands, `VideoViewModel` will call `VirtualControllerHandler`'s `move()` method to send movement commands to the drone. 
+
+At this juncture, it is important to take note of the various modes of the drone that DJIAAPP sets. The drone will be on one of the below modes when running. 
+
+1. Free Mode (Green)
+![free](https://user-images.githubusercontent.com/65152263/170414346-914f9414-5572-4ecb-ac8f-1f5bd64b3a08.PNG)
+
+Drone is able to move via the virtual joysticks and is not executing any mission or listening to commands from the Controller Script.
+
+2. Search Mode (Yellow)
+![search](https://user-images.githubusercontent.com/65152263/170414411-4c69ce1f-07b5-4ed2-a367-4539f9924ef6.PNG)
+
+Drone is executing a mission and is listening to commands from the Controller Script.
+
+3. Chase Mode (Red)
+![chase](https://user-images.githubusercontent.com/65152263/170414429-8d5ded6e-ed8a-4b9a-9378-2f3f01e20ae4.PNG)
+
+Drone is listening to commands from the Controller Script and executing commands.
+
+> Note: Drone is able to transition from any mode to any mode (i.e. Free Mode -> Chase Mode, Search Mode -> Chase Mode, etc.)  
+
+When the drone is executing a mission, it is actively listening to commands from the Controller Script. That is, if the Controller Script sends a command to DJIAAPP then the drone will abort the current mission and switch from Search Mode to Chase Mode.
+
+`Command Listener button` allows for toggling between Free and Chase Mode at any point. That is, drone can be forcefully switch to Chase / Free Mode when executing a mission by hitting the button. 
+
+Also, switching to Free Mode ensures that Drone is no longer listening to commands or executing a mission and will stop its current position. Free Mode is more of a safe way to 'pull the plug' on the drone's movement.
+
 ### 3. Live Streaming
+This section explains the various logic in the `LiveStreamHandler` class.
+
+#### Live Video Feed
+This refers to the live video feed shown on DJIAAPP which is initialized when `VideoActivity` is opened/resumed. This is done by instantiating a `DJICodecManager`. 
+
+#### RTSP Stream
+This is done by using this [rtsp-rtmp-client-library](#https://github.com/pedroSG94/rtmp-rtsp-stream-client-java). 
+
+Essentially, this library helps to reencode DJI's raw video feed to be suited for streaming via RTSP. This is done in the `startRTSP()` method as it reencodes the raw video data it sends out the formatted video data to a RTSP server.
+
+> Note: This is **NOT** a RTSP server but a RTSP client. Hence, there will be a need for RTSP server to be hosted elsewhere for DJIAAPP to send the live stream video data to.
+
+RTSP stream settings that can be adjusted are:
+- Video resolution
+- Bitrate
+- iFrame Interval
+- Frames per Second (FPS)
+
+#### RTMP Stream
+This is done by using the [LiveStreamManager](#https://developer.dji.com/api-reference/android-api/Components/LiveStreamManager/DJILiveStreamManager.html) SDK that DJI provides. 
+
+This is done in the `startRTMP()` method. 
+
+RTMP stream settings that can be adjusted are:
+- Video resolution
+- Bitrate
+
+As the current Deepstream application only takes in RTSP stream as input, there will be a need to translate this RTMP stream into RTSP stream which can be done using FFMPEG. This will require two servers one for RTMP and another for RTSP.
+
+**Important**: DJI's `LiveStreamerManager`requires internet connection to initialize. After the stream has been setup, assuming the server and DJIAAPP are in the same Local Area Network (LAN), then the internet connection is no longer required.
+
+> Note: Similar in the case of the RTSP stream, there will be a need to have a RTMP server hosted elsewhere.
+
+> Note: Stream may appear choppy occasionally because of poor connectivity between the drone remote controller and the drone itself and not because of the live stream. As a result, both live video feed seen on DJIAAPP as well as the stream will appear choppy as well. 
+ 
 ### 4. Logging
+This is done in the `VideoViewModel` and `VirtualControllerHandler` classes.
+
+The `VirtualControllerHandler` provides an `onUpdate()`method which is called every 10 times every second when the drone is armed. The `VideoViewModel` inputs a callback for the above `onUpdate()` method to execute. 
+
+Information being logged are:
+- Telemetry (Latitude, Longitude, Altitude)
+- RTMP / RTSP stream bitrate
+- Drone current speed
+
+> Note: RTSP stream bitrate is logged in the `LiveStreamHandler`
+
+To obtain and save log do: `adb logcat -s GCS > output_file.txt`
+
 ### 5. Failsafe
+This section explains the various logic in the `SafetyHandler` class. This class is primarily for controlling safety behaviors of the drone. 
+
+`SafetyHandler` is initialized once when `HomeActivity` is created. Upon initializing, it will set its max flight radius (Geo-fencing) as well as the connection failsafe behavior (i.e. when drone controller loses connection to drone).
+
+Geo-fencing is set with relation to the drone's home point. In other words, based on the drone's home point what is the distance it can travel.
+
+> Note: If DJIAAPP crashes as the drone is flying, the drone will stop moving and stay at its current position. Use actual remote control joystick to move drone or restart DJIAAPP. 
+
+## Testing
+
+### DJI Simulator
+Use DJI's simulators to test DJIAAPP. 
+
+Note that different drone models uses different simulators. 
+
+Using Unity Simulator's video feed as the Deepstream's application's input video stream, the Controller Script will be able to send movement commands to both the Unity Simulator and the DJIAAPP which should see both Unity Simulator's drone moving as well the DJI Simulator's drone moving. 
+
+### Live Testing
+For target drone waypoint movement, use DJI Pilot for linear waypoint missions. For curved waypoint missions use DJIAAPP. Use Google Maps to map out waypoints based on latitude and longitude and then import.
+
+> Note: Waypoint mission files are different for DJI Pilot and DJIAAPP. DJI  Pilot uses kml while DJIAAPP uses xml. Contents of files are also different. 
+
+## Integrating with Deepstream and Controller Script
+
+### Minimizing Video Latency
+
+Through the use of [adb port forwarding](#https://medium.com/@godwinjoseph.k/adb-port-forwarding-and-reversing-d2bc71835d43), the Android device and the GPU Laptop can be setup in such a way where both devices are able to communicate with each other via wired connection. This requires the Android device to be connected to the GPU Laptop via USB-C to USB-A. Therefore, this eliminates the need for mobile hotspots when out on the field.
+
+> To explore: It is suspected that the White GPU Laptop has a poor WIFI card resulting in receiving live video streams via RTSP (Mobile hotspot) to be very slow. Therefore, can try using other GPU Laptops to prove this. 
+
+However, since we are using a Smart Controller we are able to setup the above wired connection via adb but if we do not have a Smart Controller then the above has been yet to be replicated. As the non-Smart Controller requires it to be connected to an Android device, the Android device is then unable to connect to the GPU Laptop. Therefore, if that is the case can try to explore: 
+- USB C Hub so that the Android device can connect to both the controller and the GPU Laptop
+- If GPU Laptop is able to receive RTSP stream without much latency / lag using Mobile Hotspot, then don't have to do port forwarding. 
+- Connect [wirelessly](#https://www.online-tech-tips.com/smartphones/how-to-use-adb-wirelessly-on-your-android/) via adb (this requires Mobile Hotspot), this might be worth exploring as logging uses adb as well. 
+
+## Libraries
+
+This section includes useful libraries and repos.
+- [rtsp-rtmp-client](#https://github.com/pedroSG94/rtmp-rtsp-stream-client-java)
+- [simple-rtsp-server](#https://github.com/aler9/rtsp-simple-server)
+- [dji-sample-app](#https://github.com/dji-sdk/Mobile-SDK-Android)
+- [dji-docs](#https://developer.dji.com/mobile-sdk/documentation/introduction/index.html)
+- [dji-sdk](#https://developer.dji.com/api-reference/android-api/Components/SDKManager/DJISDKManager.html)
