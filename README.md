@@ -1,6 +1,7 @@
 
 
 
+
 # DJIAAPP
 
 ![logo](https://user-images.githubusercontent.com/65152263/170434766-01065003-9462-413c-a8b5-62146e8612c6.PNG)
@@ -230,7 +231,7 @@ This section explains the various logic in the `VirtualControllerHandler` and `V
 
 When listening to movement commands and upon receiving commands, `VideoViewModel` will call `VirtualControllerHandler`'s `move()` method to send movement commands to the drone. 
 
-At this juncture, it is important to take note of the various modes of the drone that **DJIAAPP** sets. The drone will be on one of the below modes when running. 
+At this juncture, it is important to take note of the various modes of the drone that **DJIAAPP** sets. The drone will be on one of the below modes when running and is displayed as [Current Mode of Drone on screen](#video-activity).
 
 1. Free Mode (Green)
 ![free](https://user-images.githubusercontent.com/65152263/170435457-8e73be0c-3bfe-43df-8ed7-f86e0cfce141.PNG)
@@ -274,6 +275,8 @@ RTSP stream settings that can be adjusted are:
 - iFrame Interval
 - Frames per Second (FPS)
 
+Test with FFMPEG or Deepstream application to measure difference in latency as Deepstream application will incur some costs due to inference. FFMPEG command: `ffplay -fflags nobuffer -flags low_delay  rtsp://localhost:8554/test` 
+
 #### RTMP Stream
 This is done by using the [LiveStreamManager](#https://developer.dji.com/api-reference/android-api/Components/LiveStreamManager/DJILiveStreamManager.html) SDK that DJI provides. 
 
@@ -283,7 +286,7 @@ RTMP stream settings that can be adjusted are:
 - Video resolution
 - Bitrate
 
-As the current **Deepstream application** only takes in RTSP stream as input, there will be a need to translate this RTMP stream into RTSP stream which can be done using FFMPEG. This will require two servers one for RTMP and another for RTSP.
+As the current **Deepstream application** only takes in RTSP stream as input, there will be a need to translate this RTMP stream into RTSP stream which can be done using FFMPEG. This will require two servers one for RTMP and another for RTSP. FFMPEG command to translate: `ffmpeg -i rtmp://localhost:1936/test -c copy -f rtsp rtsp://localhost:8554/test`
 
 **Important**: DJI's `LiveStreamerManager`requires internet connection to initialize. After the stream has been setup, assuming the server and **DJIAAPP** are in the same Local Area Network (LAN), then the internet connection is no longer required.
 
@@ -321,7 +324,7 @@ Use DJI's simulators to test **DJIAAPP**.
 
 Note that different drone models uses different simulators. 
 
-Using Unity Simulator's video feed as the **Deepstream's application's** input video stream, the **Controller Script** will be able to send movement commands to both the Unity Simulator and the **DJIAAPP** which should see both Unity Simulator's drone moving as well the DJI Simulator's drone moving. 
+Using Unity Simulator's video feed as the **Deepstream application's** input video stream, the **Controller Script** will be able to send movement commands to both the Unity Simulator and the **DJIAAPP** which should see both Unity Simulator's drone moving as well the DJI Simulator's drone moving. 
 
 ### Live Testing
 For target drone waypoint movement, use DJI Pilot for linear waypoint missions. For curved waypoint missions use **DJIAAPP**. Use Google Maps to map out waypoints based on latitude and longitude and then import.
@@ -340,8 +343,6 @@ However, since we are using a Smart Controller we are able to setup the above wi
 - USB C Hub so that the Android device can connect to both the controller and the GPU Laptop
 - If GPU Laptop is able to receive RTSP stream without much latency / lag using Mobile Hotspot, then don't have to do port forwarding. 
 - Connect [wirelessly](https://www.online-tech-tips.com/smartphones/how-to-use-adb-wirelessly-on-your-android/) via adb (this requires Mobile Hotspot), this might be worth exploring as logging uses adb as well. 
-
-
 
 ## Libraries
 
