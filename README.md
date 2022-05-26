@@ -307,14 +307,14 @@ For target drone waypoint movement, use DJI Pilot for linear waypoint missions. 
 
 ### Minimizing Video Latency
 
-Through the use of [adb port forwarding](#https://medium.com/@godwinjoseph.k/adb-port-forwarding-and-reversing-d2bc71835d43), the Android device and the GPU Laptop can be setup in such a way where both devices are able to communicate with each other via wired connection. This requires the Android device to be connected to the GPU Laptop via USB-C to USB-A. Therefore, this eliminates the need for mobile hotspots when out on the field.
+Through the use of [adb port forwarding](https://medium.com/@godwinjoseph.k/adb-port-forwarding-and-reversing-d2bc71835d43), the Android device and the GPU Laptop can be setup in such a way where both devices are able to communicate with each other via wired connection. This requires the Android device to be connected to the GPU Laptop via USB-C to USB-A. Therefore, this eliminates the need for mobile hotspots when out on the field.
 
 > To explore: It is suspected that the White GPU Laptop has a poor WIFI card resulting in receiving live video streams via RTSP (Mobile hotspot) to be very slow. Therefore, can try using other GPU Laptops to prove this. 
 
 However, since we are using a Smart Controller we are able to setup the above wired connection via adb but if we do not have a Smart Controller then the above has been yet to be replicated. As the non-Smart Controller requires it to be connected to an Android device, the Android device is then unable to connect to the GPU Laptop. Therefore, if that is the case can try to explore: 
 - USB C Hub so that the Android device can connect to both the controller and the GPU Laptop
 - If GPU Laptop is able to receive RTSP stream without much latency / lag using Mobile Hotspot, then don't have to do port forwarding. 
-- Connect [wirelessly](#https://www.online-tech-tips.com/smartphones/how-to-use-adb-wirelessly-on-your-android/) via adb (this requires Mobile Hotspot), this might be worth exploring as logging uses adb as well. 
+- Connect [wirelessly](https://www.online-tech-tips.com/smartphones/how-to-use-adb-wirelessly-on-your-android/) via adb (this requires Mobile Hotspot), this might be worth exploring as logging uses adb as well. 
 
 ## Libraries
 
