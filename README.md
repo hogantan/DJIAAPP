@@ -1,6 +1,7 @@
 
 
-# DJIAAPP (GCS)
+
+# DJIAAPP
 
 Welcome to the DJI Android App (**DJIAAPP**) !
 
@@ -27,6 +28,7 @@ Compatibility (**DJIAAPP** has been tested using):
 	a. [Fully Integrated System](#fully-integrated-system)
 	
 	b. [DJIAAPP](#djiaapp)
+	
 3. [Features](#features)
 
 	a. [Waypoint Mission](#waypoint-mission)
@@ -50,7 +52,7 @@ Compatibility (**DJIAAPP** has been tested using):
 
 ## Quickstart
 This section provides a quickstart guide of using **DJIAAPP**. This quickstart guide assumes that the following requirements are met:
-- GPU Laptop that has Deepstream application (`dvd.py`),**Controller Script** (`receiveampq3.py`), Android Debug Bridge ([adb](#https://developer.android.com/studio/command-line/adb))
+- GPU Laptop that has **Deepstream application** (`dvd.py`),**Controller Script** (`receiveamqp3.py`), Android Debug Bridge ([adb](#https://developer.android.com/studio/command-line/adb))
 - DJI Drone (Mavic 2 Pro)
 - DJI Smart Controller
 
@@ -62,24 +64,24 @@ After meeting the above requirements, follow the steps below:
 
 > Note: Where you power on the drone is where the drone's home point is. Therefore, power it on in a safe region for takeoff and landing.
 
-5. Connect DJI Smart Controller to GPU Laptop
-6. Open terminal in GPU Laptop and run:  `./djiaapp_init.sh`
-7. Initialize Deepstream application on GPU Laptop
-8. Open **DJIAAPP** on Smart Controller 
+4. Connect DJI Smart Controller to GPU Laptop
+5. Open terminal in GPU Laptop and run:  `./djiaapp_init.sh`
+6. Initialize **Deepstream application** on GPU Laptop
+7. Open **DJIAAPP** on Smart Controller 
 
 > Note: DJIAAPP needs internet connection if launched for the first time of installation in order to register the DJI SDK.
 
-9. After connecting successfully to drone, hit the [Start](#home-activity) button on screen to go to video view
-10. Hit the [RTSP button](#video-activity) on screen and the drone's live video should be streaming to the RTSP server on the GPU Laptop
+8. After connecting successfully to drone, hit the [Start](#home-activity) button on screen to go to video view
+9. Hit the [RTSP button](#video-activity) on screen and the drone's live video should be streaming to the RTSP server on the GPU Laptop
 
 > To check whether stream is received by the server, check RTSP server terminal on GPU Laptop if the RTSP stream is not opened, it could be that the IP address of the RTSP server is incorrect in which case hit back and change the IP address in the settings. 
 
-11. Launch Deepstream on the GPU Laptop by running the command: ` py dvd.py -i rtsp://localhost:8554/test` 
-12. Takeoff the drone by hitting the [Toggle UI button](#video-activity) then the  [Takeoff button](#video-activity) on screen
-13. Position the drone in desired position using [Virtual Joystick buttons](#video-activity) on screen 
-14. Turn on the command listener on DJIAAP by hitting the [Command Listener button](#video-activity)
-15. Launch **Controller Script** on GPU Laptop by running the command: `$ py receiveamqp3.py` 
-16. Viola! Your drone should be following a drone in the video view! (or at least something else that has been detected)
+10. Launch **Deepstream application** on the GPU Laptop by running the command: ` py dvd.py -i rtsp://localhost:8554/test` 
+11. Takeoff the drone by hitting the [Toggle UI button](#video-activity) then the  [Takeoff button](#video-activity) on screen
+12. Position the drone in desired position using [Virtual Joystick buttons](#video-activity) on screen 
+13. Turn on the command listener on **DJIAAP** by hitting the [Command Listener button](#video-activity)
+14. Launch **Controller Script** on GPU Laptop by running the command: `$ py receiveamqp3.py` 
+15. Viola! Your drone should be following a drone in the video view! (or at least something else that has been detected)
 
 ## Architecture
 
@@ -249,7 +251,7 @@ When the drone is executing a mission, it is actively listening to commands from
 
 [Command Listener button](#video-activity) allows for toggling between Free and Chase Mode at any point. That is, drone can be forcefully switch to Chase / Free Mode when executing a mission by hitting the button. 
 
-Also, switching to Free Mode ensures that Drone is no longer listening to commands or executing a mission and will stop its current position. Free Mode is more of a safe way to 'pull the plug' on the drone's movement.
+Also, switching to Free Mode ensures that the drone is no longer listening to commands or executing a mission and will stop its current position. Free Mode is more of a safe way to 'pull the plug' on the drone's movement.
 
 ### c. Live Streaming
 This section explains the various logic in the `LiveStreamHandler` class.
@@ -317,7 +319,7 @@ Use DJI's simulators to test **DJIAAPP**.
 
 Note that different drone models uses different simulators. 
 
-Using Unity Simulator's video feed as the Deepstream's application's input video stream, the **Controller Script** will be able to send movement commands to both the Unity Simulator and the **DJIAAPP** which should see both Unity Simulator's drone moving as well the DJI Simulator's drone moving. 
+Using Unity Simulator's video feed as the **Deepstream's application's** input video stream, the **Controller Script** will be able to send movement commands to both the Unity Simulator and the **DJIAAPP** which should see both Unity Simulator's drone moving as well the DJI Simulator's drone moving. 
 
 ### Live Testing
 For target drone waypoint movement, use DJI Pilot for linear waypoint missions. For curved waypoint missions use **DJIAAPP**. Use Google Maps to map out waypoints based on latitude and longitude and then import.
@@ -328,7 +330,7 @@ For target drone waypoint movement, use DJI Pilot for linear waypoint missions. 
 
 ### Minimizing Video Latency
 
-Through the use of [adb port forwarding](https://medium.com/@godwinjoseph.k/adb-port-forwarding-and-reversing-d2bc71835d43), the Android device and the GPU Laptop can be setup in such a way where both devices are able to communicate with each other via wired connection. This requires the Android device to be connected to the GPU Laptop via USB-C to USB-A. Therefore, this eliminates the need for mobile hotspots when out on the field.
+Through the use of [adb port forwarding](https://medium.com/@godwinjoseph.k/adb-port-forwarding-and-reversing-d2bc71835d43), the Android device and the GPU Laptop can be setup in such a way where both devices are able to communicate with each other via wired connection. This requires the Android device to be connected to the GPU Laptop via USB-C to USB-A. Therefore, this eliminates the need for mobile hotspots when out on the field. See `djiaapp_init.sh`.
 
 > To explore: It is suspected that the White GPU Laptop has a poor WIFI card resulting in receiving live video streams via RTSP (Mobile hotspot) to be very slow. Therefore, can try using other GPU Laptops to prove this. 
 
@@ -336,6 +338,8 @@ However, since we are using a Smart Controller we are able to setup the above wi
 - USB C Hub so that the Android device can connect to both the controller and the GPU Laptop
 - If GPU Laptop is able to receive RTSP stream without much latency / lag using Mobile Hotspot, then don't have to do port forwarding. 
 - Connect [wirelessly](https://www.online-tech-tips.com/smartphones/how-to-use-adb-wirelessly-on-your-android/) via adb (this requires Mobile Hotspot), this might be worth exploring as logging uses adb as well. 
+
+
 
 ## Libraries
 
