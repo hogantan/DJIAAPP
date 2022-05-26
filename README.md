@@ -35,15 +35,15 @@ Compatibility (**DJIAAPP** has been tested using):
 	
 3. [Features](#features)
 
-	a. [Waypoint Mission](#a.-waypoint-mission)
+	a. [Waypoint Mission](#waypoint-mission)
 	
-	b. [Virtual Control](#b.-virtual-control)
+	b. [Virtual Control](#virtual-control)
 	
-	c. [Live Streaming](#c.-live-streaming)
+	c. [Live Streaming](#live-streaming)
 	
-	d. [Logging](#d.-logging)
+	d. [Logging](#logging)
 	
-	e. [Failsafe](#e.-failsafe)
+	e. [Failsafe](#failsafe)
 	
 4. [Testing](#testing)
 
@@ -155,7 +155,7 @@ This is the main page of **DJIAAPP** where most key features are located in name
 > Note: Both Home and Video activity are only created **once** that means that there is only one instance of each activity every time the application ran. That is both activities are able to switch/toggle between each other without having the need to create a new activity every time.
 
 ## Features
-### a. Waypoint Mission
+### Waypoint Mission
 
 This section explains the various logic in the `WaypointMissionHandler` class. 
 
@@ -213,7 +213,7 @@ Executes successfully uploaded waypoint mission. When executing mission, drone w
 
 In other words, if a movement command is sent via the **Controller Script**, the drone will switch to Chase Mode. 
 
-### b. Virtual Control
+### Virtual Control
 This section explains the various logic in the `VirtualControllerHandler` and `VideoViewModel` classes.
 
 #### Taking off
@@ -259,7 +259,7 @@ When the drone is executing a mission, it is actively listening to commands from
 
 Also, switching to Free Mode ensures that the drone is no longer listening to commands or executing a mission and will stop its current position. Free Mode is more of a safe way to 'pull the plug' on the drone's movement.
 
-### c. Live Streaming
+### Live Streaming
 This section explains the various logic in the `LiveStreamHandler` class.
 
 #### Live Video Feed
@@ -297,7 +297,7 @@ As the current **Deepstream application** only takes in RTSP stream as input, th
 
 > Note: Stream may appear choppy occasionally because of poor connectivity between the drone remote controller and the drone itself and not because of the live stream. As a result, both live video feed seen on **DJIAAPP** as well as the stream will appear choppy as well. 
  
-### d. Logging
+### Logging
 This is done in the `VideoViewModel` and `VirtualControllerHandler` classes.
 
 The `VirtualControllerHandler` provides an `onUpdate()`method which is called every 10 times every second when the drone is armed. The `VideoViewModel` inputs a callback for the above `onUpdate()` method to execute. 
@@ -311,7 +311,7 @@ Information being logged are:
 
 To obtain and save log do: `adb logcat -s GCS > output_file.txt`
 
-### e. Failsafe
+### Failsafe
 This section explains the various logic in the `SafetyHandler` class. This class is primarily for controlling safety behaviors of the drone. 
 
 `SafetyHandler` is initialized once when `HomeActivity` is created. Upon initializing, it will set its max flight radius (Geo-fencing) as well as the connection failsafe behavior (i.e. when drone controller loses connection to drone).
