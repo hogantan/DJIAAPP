@@ -23,17 +23,28 @@ Compatibility (**DJIAAPP** has been tested using):
 ## Table of Content
 1. [Quickstart](#quickstart)
 2. [Architecture](#architecture)
+
 	a. [Fully Integrated System](#fully-integrated-system)
+	
 	b. [DJIAAPP](#djiaapp)
 3. [Features](#features)
+
 	a. [Waypoint Mission](#waypoint-mission)
+	
 	b. [Virtual Control](#virtual-control)
+	
 	c. [Live Streaming](#live-streaming)
+	
 	d. [Logging](#logging)
+	
 	e. [Failsafe](#failsafe)
+	
 4. [Testing](#testing)
+
 	a. [DJI Simulator](#dji-simulator)
+	
 	b. [Live Testing](#live-testing)
+	
 5. [Integrating with Deepstream and Controller Script](#integrating-with-deepstream-and-controller-script)
 6. [Libraries](#libraries)
 
