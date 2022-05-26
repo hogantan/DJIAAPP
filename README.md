@@ -2,6 +2,7 @@
 
 
 
+
 # DJIAAPP
 
 ![logo](https://user-images.githubusercontent.com/65152263/170434766-01065003-9462-413c-a8b5-62146e8612c6.PNG)
@@ -30,19 +31,19 @@ Compatibility (**DJIAAPP** has been tested using):
 
 	a. [Fully Integrated System](#fully-integrated-system)
 	
-	b. [DJIAAPP](#djiaapp)
+	b. [DJI Android App](#dji-android-app)
 	
 3. [Features](#features)
 
-	a. [Waypoint Mission](#waypoint-mission)
+	a. [Waypoint Mission](#a.-waypoint-mission)
 	
-	b. [Virtual Control](#virtual-control)
+	b. [Virtual Control](#b.-virtual-control)
 	
-	c. [Live Streaming](#live-streaming)
+	c. [Live Streaming](#c.-live-streaming)
 	
-	d. [Logging](#logging)
+	d. [Logging](#d.-logging)
 	
-	e. [Failsafe](#failsafe)
+	e. [Failsafe](#e.-failsafe)
 	
 4. [Testing](#testing)
 
@@ -61,7 +62,7 @@ This section provides a quickstart guide of using **DJIAAPP**. This quickstart g
 
 After meeting the above requirements, follow the steps below:
 
-1. Download the apk [here](https://github.com/hogantan/DJIAAPP2/releases/tag/v1)
+1. Download the apk [here](https://github.com/DvdrepoMain/djiaapp/releases/tag/v1)
 2. Install apk in DJI Smart Controller
 3. Power on drone 
 
@@ -100,7 +101,7 @@ The following diagram illustrates the entire architecture of the entire system (
 5. **Controller Script** processes coordinates and sends out movement commands to DJIAAPP to consume
 6. **DJIAAPP** consumes movement commands and executes movement commands
 
-### DJIAAPP
+### DJI Android App
 
 **DJIAAPP** follows the Model View ViewModel (MVVM) architecture. It contains only 3 activities namely: Connection, Home and Video. The following images depicts the various activities and provides information on each activity. 
 
@@ -354,3 +355,29 @@ This section includes useful libraries and repos.
 - [dji-sample-app](https://github.com/dji-sdk/Mobile-SDK-Android)
 - [dji-docs](https://developer.dji.com/mobile-sdk/documentation/introduction/index.html)
 - [dji-sdk](https://developer.dji.com/api-reference/android-api/Components/SDKManager/DJISDKManager.html)
+
+
+## FAQ
+1. Why is Android Studio building fail due to Manifest error?
+
+Go to `build.gradle`(Module) and change compiledSdkVersion and targetSdkVersion to 30. Then go to `AndroidManifest.xml` and click on Merged Manifest (located beside Text tab below) and insert `android:exported="true"` to services that missing it. Return back to `build.gradle` and SdkVersions to 32. 
+
+2. Why is DJI Simulator not landing drone after pressing land button?
+
+DJI Simulator occasionally bugs out (even occasionally when taking off, it will just move on its own) but landing works during live field testing.
+
+3. Why is DJI SDK not registering during connection?
+
+Ensure that Android device has internet connection during first installation and launch of DJIAAPP and ensure that all permissions are allowed. 
+
+4. Why are the Virtual Controls not working but physical joysticks are?
+
+There might be occasions where the physical control takes control. Try to send drone on a waypoint mission and see whether virtual joysticks will be able to activate then.
+
+5. What happens if DJIAAPP crashes during flight?
+
+All controls will seize and drone will remain at its position. Physical remote controller might not take control in which case send it back to home and see whether the physical controls is able to be activated. 
+
+6. What happens if drone goes past geo-fencing?
+
+Virtual controls will deactivate and the drone will remain still passing movement controls to the actual remote controller. 
