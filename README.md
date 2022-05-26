@@ -24,8 +24,17 @@ Compatibility (**DJIAAPP** has been tested using):
 ## Table of Content
 1. [Quickstart](#quickstart)
 2. [Architecture](#architecture)
+	a. [Fully Integrated System](#fully-integrated-system)
+	b. [DJIAAPP](#djiaapp)
 3. [Features](#features)
+	a. [Waypoint Mission](#waypoint-mission)
+	b. [Virtual Control](#virtual-control)
+	c. [Live Streaming](#live-streaming)
+	d. [Logging](#logging)
+	e. [Failsafe](#failsafe)
 4. [Testing](#testing)
+	a. [DJI Simulator](#dji-simulator)
+	b. [Live Testing](#live-testing)
 5. [Integrating with Deepstream and Controller Script](#integrating-with-deepstream-and-controller-script)
 6. [Libraries](#libraries)
 
@@ -56,7 +65,7 @@ $ ./djiaapp_init.sh
 11. Launch Deepstream on the GPU Laptop by running the command: `$ py dvd.py -i rtsp://localhost:8554/test` 
 12. Takeoff the drone by hitting the `Toggle UI button` then the  `Takeoff button` on screen
 13. Position the drone in desired position using `Virtual Joystick buttons` on screen 
-14. Turn on the command listener on DJIAAP by hitting the `Command Listener button`
+14. Turn on the command listener on DJIAAP by hitting the [Command Listener button](#video-activity)
 15. Launch **Controller Script** on GPU Laptop by running the command: `$ py receiveamqp3.py` 
 16. Viola! Your drone should be following a drone in the video view! (or at least something else that has been detected)
 
@@ -126,7 +135,7 @@ This is the main page of **DJIAAPP** where most key features are located in name
 > Note: Both Home and Video activity are only created **once** that means that there is only one instance of each activity every time the application ran. That is both activities are able to switch/toggle between each other without having the need to create a new activity every time.
 
 ## Features
-### 1. Waypoint Mission
+### a. Waypoint Mission
 
 This section explains the various logic in the `WaypointMissionhandler` class. 
 
@@ -184,7 +193,7 @@ Executes successfully uploaded waypoint mission. When executing mission, drone w
 
 In other words, if a movement command is sent via the **Controller Script**, the drone will switch to Chase Mode. 
 
-### 2. Virtual Control
+### b. Virtual Control
 This section explains the various logic in the `VirtualControllerHandler` and `VideoViewModel` classes.
 
 #### Taking off
@@ -226,11 +235,11 @@ Drone is listening to commands from the **Controller Script** and executing comm
 
 When the drone is executing a mission, it is actively listening to commands from the **Controller Script**. That is, if the **Controller Script** sends a command to **DJIAAPP** then the drone will abort the current mission and switch from Search Mode to Chase Mode.
 
-`Command Listener button` allows for toggling between Free and Chase Mode at any point. That is, drone can be forcefully switch to Chase / Free Mode when executing a mission by hitting the button. 
+[Command Listener button](#video-activity) allows for toggling between Free and Chase Mode at any point. That is, drone can be forcefully switch to Chase / Free Mode when executing a mission by hitting the button. 
 
 Also, switching to Free Mode ensures that Drone is no longer listening to commands or executing a mission and will stop its current position. Free Mode is more of a safe way to 'pull the plug' on the drone's movement.
 
-### 3. Live Streaming
+### c. Live Streaming
 This section explains the various logic in the `LiveStreamHandler` class.
 
 #### Live Video Feed
@@ -266,7 +275,7 @@ As the current **Deepstream application** only takes in RTSP stream as input, th
 
 > Note: Stream may appear choppy occasionally because of poor connectivity between the drone remote controller and the drone itself and not because of the live stream. As a result, both live video feed seen on **DJIAAPP** as well as the stream will appear choppy as well. 
  
-### 4. Logging
+### d. Logging
 This is done in the `VideoViewModel` and `VirtualControllerHandler` classes.
 
 The `VirtualControllerHandler` provides an `onUpdate()`method which is called every 10 times every second when the drone is armed. The `VideoViewModel` inputs a callback for the above `onUpdate()` method to execute. 
@@ -280,7 +289,7 @@ Information being logged are:
 
 To obtain and save log do: `adb logcat -s GCS > output_file.txt`
 
-### 5. Failsafe
+### e. Failsafe
 This section explains the various logic in the `SafetyHandler` class. This class is primarily for controlling safety behaviors of the drone. 
 
 `SafetyHandler` is initialized once when `HomeActivity` is created. Upon initializing, it will set its max flight radius (Geo-fencing) as well as the connection failsafe behavior (i.e. when drone controller loses connection to drone).
