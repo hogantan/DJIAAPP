@@ -1,4 +1,5 @@
 
+
 # DJIAAPP (GCS)
 
 Welcome to the DJI Android App (**DJIAAPP**) or Ground Control Station (**GCS**) application. **DJIAAP** is built primarily with the DJI Mobile Android SDK alongside various libraries. 
@@ -204,26 +205,26 @@ This section explains the various logic in the `VirtualControllerHandler` and `V
 
 When listening to movement commands and upon receiving commands, `VideoViewModel` will call `VirtualControllerHandler`'s `move()` method to send movement commands to the drone. 
 
-At this juncture, it is important to take note of the various modes of the drone that DJIAAPP sets. The drone will be on one of the below modes when running. 
+At this juncture, it is important to take note of the various modes of the drone that **DJIAAPP** sets. The drone will be on one of the below modes when running. 
 
 1. Free Mode (Green)
 ![free](https://user-images.githubusercontent.com/65152263/170414346-914f9414-5572-4ecb-ac8f-1f5bd64b3a08.PNG)
 
-Drone is able to move via the virtual joysticks and is not executing any mission or listening to commands from the Controller Script.
+Drone is able to move via the virtual joysticks and is not executing any mission or listening to commands from the **Controller Script**.
 
 2. Search Mode (Yellow)
 ![search](https://user-images.githubusercontent.com/65152263/170414411-4c69ce1f-07b5-4ed2-a367-4539f9924ef6.PNG)
 
-Drone is executing a mission and is listening to commands from the Controller Script.
+Drone is executing a mission and is listening to commands from the **Controller Script**.
 
 3. Chase Mode (Red)
 ![chase](https://user-images.githubusercontent.com/65152263/170414429-8d5ded6e-ed8a-4b9a-9378-2f3f01e20ae4.PNG)
 
-Drone is listening to commands from the Controller Script and executing commands.
+Drone is listening to commands from the **Controller Script** and executing commands.
 
 > Note: Drone is able to transition from any mode to any mode (i.e. Free Mode -> Chase Mode, Search Mode -> Chase Mode, etc.)  
 
-When the drone is executing a mission, it is actively listening to commands from the Controller Script. That is, if the Controller Script sends a command to DJIAAPP then the drone will abort the current mission and switch from Search Mode to Chase Mode.
+When the drone is executing a mission, it is actively listening to commands from the **Controller Script**. That is, if the **Controller Script** sends a command to **DJIAAPP** then the drone will abort the current mission and switch from Search Mode to Chase Mode.
 
 `Command Listener button` allows for toggling between Free and Chase Mode at any point. That is, drone can be forcefully switch to Chase / Free Mode when executing a mission by hitting the button. 
 
@@ -233,14 +234,14 @@ Also, switching to Free Mode ensures that Drone is no longer listening to comman
 This section explains the various logic in the `LiveStreamHandler` class.
 
 #### Live Video Feed
-This refers to the live video feed shown on DJIAAPP which is initialized when `VideoActivity` is opened/resumed. This is done by instantiating a `DJICodecManager`. 
+This refers to the live video feed shown on **DJIAAPP** which is initialized when `VideoActivity` is opened/resumed. This is done by instantiating a `DJICodecManager`. 
 
 #### RTSP Stream
 This is done by using this [rtsp-rtmp-client-library](#https://github.com/pedroSG94/rtmp-rtsp-stream-client-java). 
 
 Essentially, this library helps to reencode DJI's raw video feed to be suited for streaming via RTSP. This is done in the `startRTSP()` method as it reencodes the raw video data it sends out the formatted video data to a RTSP server.
 
-> Note: This is **NOT** a RTSP server but a RTSP client. Hence, there will be a need for RTSP server to be hosted elsewhere for DJIAAPP to send the live stream video data to.
+> Note: This is **NOT** a RTSP server but a RTSP client. Hence, there will be a need for RTSP server to be hosted elsewhere for **DJIAAPP** to send the live stream video data to.
 
 RTSP stream settings that can be adjusted are:
 - Video resolution
@@ -257,13 +258,13 @@ RTMP stream settings that can be adjusted are:
 - Video resolution
 - Bitrate
 
-As the current Deepstream application only takes in RTSP stream as input, there will be a need to translate this RTMP stream into RTSP stream which can be done using FFMPEG. This will require two servers one for RTMP and another for RTSP.
+As the current **Deepstream application** only takes in RTSP stream as input, there will be a need to translate this RTMP stream into RTSP stream which can be done using FFMPEG. This will require two servers one for RTMP and another for RTSP.
 
-**Important**: DJI's `LiveStreamerManager`requires internet connection to initialize. After the stream has been setup, assuming the server and DJIAAPP are in the same Local Area Network (LAN), then the internet connection is no longer required.
+**Important**: DJI's `LiveStreamerManager`requires internet connection to initialize. After the stream has been setup, assuming the server and **DJIAAPP** are in the same Local Area Network (LAN), then the internet connection is no longer required.
 
 > Note: Similar in the case of the RTSP stream, there will be a need to have a RTMP server hosted elsewhere.
 
-> Note: Stream may appear choppy occasionally because of poor connectivity between the drone remote controller and the drone itself and not because of the live stream. As a result, both live video feed seen on DJIAAPP as well as the stream will appear choppy as well. 
+> Note: Stream may appear choppy occasionally because of poor connectivity between the drone remote controller and the drone itself and not because of the live stream. As a result, both live video feed seen on **DJIAAPP** as well as the stream will appear choppy as well. 
  
 ### 4. Logging
 This is done in the `VideoViewModel` and `VirtualControllerHandler` classes.
@@ -286,21 +287,21 @@ This section explains the various logic in the `SafetyHandler` class. This class
 
 Geo-fencing is set with relation to the drone's home point. In other words, based on the drone's home point what is the distance it can travel.
 
-> Note: If DJIAAPP crashes as the drone is flying, the drone will stop moving and stay at its current position. Use actual remote control joystick to move drone or restart DJIAAPP. 
+> Note: If **DJIAAPP** crashes as the drone is flying, the drone will stop moving and stay at its current position. Use actual remote control joystick to move drone or restart **DJIAAPP**. 
 
 ## Testing
 
 ### DJI Simulator
-Use DJI's simulators to test DJIAAPP. 
+Use DJI's simulators to test **DJIAAPP**. 
 
 Note that different drone models uses different simulators. 
 
-Using Unity Simulator's video feed as the Deepstream's application's input video stream, the Controller Script will be able to send movement commands to both the Unity Simulator and the DJIAAPP which should see both Unity Simulator's drone moving as well the DJI Simulator's drone moving. 
+Using Unity Simulator's video feed as the Deepstream's application's input video stream, the **Controller Script** will be able to send movement commands to both the Unity Simulator and the **DJIAAPP** which should see both Unity Simulator's drone moving as well the DJI Simulator's drone moving. 
 
 ### Live Testing
-For target drone waypoint movement, use DJI Pilot for linear waypoint missions. For curved waypoint missions use DJIAAPP. Use Google Maps to map out waypoints based on latitude and longitude and then import.
+For target drone waypoint movement, use DJI Pilot for linear waypoint missions. For curved waypoint missions use **DJIAAPP**. Use Google Maps to map out waypoints based on latitude and longitude and then import.
 
-> Note: Waypoint mission files are different for DJI Pilot and DJIAAPP. DJI  Pilot uses kml while DJIAAPP uses xml. Contents of files are also different. 
+> Note: Waypoint mission files are different for DJI Pilot and **DJIAAPP**. DJI  Pilot uses kml while **DJIAAPP** uses xml. Contents of files are also different. 
 
 ## Integrating with Deepstream and Controller Script
 
