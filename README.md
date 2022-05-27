@@ -10,7 +10,7 @@
 
 Welcome to the DJI Android App (**DJIAAPP**) !
 
-**DJIAAP** is built primarily with the DJI Mobile Android SDK alongside various libraries. 
+**DJIAAPP** is built primarily with the DJI Mobile Android SDK alongside various libraries. 
 
 **DJIAAPP** is designed to have the controlled DJI drone follow and track down a drone via the use of computer vision and a controller script.
 
