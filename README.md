@@ -250,27 +250,30 @@ This section explains the various logic in the `VirtualControllerHandler` and `V
 	At this juncture, it is important to take note of the various modes of the drone. The drone will be on one of the below modes when running and is displayed as [Current Mode of Drone on screen](#video-activity).
 
 	1. Free Mode (Green)
+	
 	![free](https://user-images.githubusercontent.com/65152263/170435457-8e73be0c-3bfe-43df-8ed7-f86e0cfce141.PNG)
 
-		Drone is able to move via the virtual joysticks and is not executing any mission or listening to commands from the **Controller Script**.
+	Drone is able to move via the virtual joysticks and is not executing any mission or listening to commands from the **Controller Script**.
 
 	2. Search Mode (Yellow)
+	
 	![search](https://user-images.githubusercontent.com/65152263/170435486-54da6b01-4b5b-42d4-a2b7-9a6c5e11dd21.PNG)
 
-		Drone is executing a mission and is listening to commands from the **Controller Script**.
+	Drone is executing a mission and is listening to commands from the **Controller Script**.
 
 	3. Chase Mode (Red)
+	
 	![chase](https://user-images.githubusercontent.com/65152263/170435077-e3b0eaba-3611-494c-aeab-72d02e772900.PNG)
 
-		Drone is listening to commands from the **Controller Script** and executing autonomous movement commands.
+	Drone is listening to commands from the **Controller Script** and executing autonomous movement commands.
 
-		> Note: Drone is able to transition from any mode to any mode (i.e. Free Mode -> Chase Mode, Search Mode -> Chase Mode, etc.)  
+	> Note: Drone is able to transition from any mode to any mode (i.e. Free Mode -> Chase Mode, Search Mode -> Chase Mode, etc.)  
 
-		When the drone is executing a mission, it is actively listening to commands from the **Controller Script**. That is, if the **Controller Script** sends a command to **DJIAAPP** then the drone will abort the current mission and switch from Search Mode to Chase Mode.
+	When the drone is executing a mission, it is actively listening to commands from the **Controller Script**. That is, if the **Controller Script** sends a command to **DJIAAPP** then the drone will abort the current mission and switch from Search Mode to Chase Mode.
 
-		[Command Listener button](#video-activity) allows for toggling between Free and Chase Mode at any point. That is, drone can be forcefully switch to Chase / Free Mode when executing a mission by hitting the button. 
+	[Command Listener button](#video-activity) allows for toggling between Free and Chase Mode at any point. That is, drone can be forcefully switch to Chase / Free Mode when executing a mission by hitting the button. 
 
-		Also, switching to Free Mode ensures that the drone is no longer listening to commands or executing a mission and will stop its current position. Free Mode is more of a safe way to 'pull the plug' on the drone's movement.
+	Also, switching to Free Mode ensures that the drone is no longer listening to commands or executing a mission and will stop its current position. Free Mode is more of a safe way to 'pull the plug' on the drone's movement.
 
 ### Live Streaming
 This section explains the various logic in the `LiveStreamHandler` class.
