@@ -59,7 +59,7 @@ Requirements:
 6. [Libraries](#libraries)
 
 ## Quickstart
-This section provides a quickstart guide of using **DJIAAPP** alongside computer vision analytics and a controller script. 
+This section provides a quickstart guide of using **DJIAAPP** alongside the **Deepstream application** and the **Controller Script**. 
 
 If you just want the application, download it [here](https://github.com/hogantan/DJIAAPP2/releases/tag/v1)!
 
