@@ -356,7 +356,7 @@ Either control target control manually or generate waypoint missions for it. For
 Through the use of [adb port forwarding](https://medium.com/@godwinjoseph.k/adb-port-forwarding-and-reversing-d2bc71835d43), the Android device and the GPU Laptop can be setup in such a way where both devices are able to communicate with each other via wired connection. This requires the Android device to be connected to the GPU Laptop via USB-C to USB-A. Therefore, this eliminates the need for mobile hotspots when out on the field. 
 ```
 $ sudo adb reverse tcp:8554 tcp:8554 # For RTSP Stream
-$ sudo adb reverse tcp:1935 tcp:1936 # For RTMP Stream
+$ sudo adb reverse tcp:1935 tcp:1935 # For RTMP Stream
 $ sudo adb reverse tcp:5555 tcp:5555 # For Controller script ZMQ
 $ adb devices
 ```
