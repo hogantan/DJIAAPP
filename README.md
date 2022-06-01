@@ -4,6 +4,7 @@
 
 
 
+
 # DJIAAPP
 
 ![logo](https://user-images.githubusercontent.com/65152263/170434766-01065003-9462-413c-a8b5-62146e8612c6.PNG)
@@ -71,29 +72,27 @@ This quickstart guide assumes that the following requirements are met:
 After meeting the above requirements, follow the steps below:
 
 1. Download the apk [here](https://github.com/hogantan/DJIAAPP2/releases/tag/v1)
-2. Install apk in DJI Smart Controller
+2. Install **DJIAAPP** on the Smart Controller
 3. Power on drone 
 
 > Note: Where you power on the drone is where the drone's home point is. Therefore, power it on in a safe region for takeoff and landing.
 
-4. Connect DJI Smart Controller to GPU Laptop
-5. Open terminal in GPU Laptop and run:  `./djiaapp_init.sh`
-6. Initialize **Deepstream application** on GPU Laptop
-7. Open **DJIAAPP** on Smart Controller 
+4. Launch **DJIAAPP** on the Smart Controller
+5. After **DJIAAPP** has establish connection with the drone, hit the [Start](#home-activity) button 
+6. Start RTSP/RTMP server on the GPU Laptop
 
-> Note: DJIAAPP needs internet connection if launched for the first time of installation in order to register the DJI SDK.
+> Note: To check whether stream is received by the server, check RTSP server terminal on GPU Laptop if the RTSP stream is not opened, it could be that the IP address of the RTSP server is incorrect in which case hit back and change the IP address in the settings. 
 
-8. After connecting successfully to drone, hit the [Start](#home-activity) button on screen to go to video view
-9. Hit the [RTSP button](#video-activity) on screen and the drone's live video should be streaming to the RTSP server on the GPU Laptop
+7. Hit the [RTSP button](#video-activity) on screen and the drone's live video should be streaming to the RTSP server on the GPU Laptop
 
-> To check whether stream is received by the server, check RTSP server terminal on GPU Laptop if the RTSP stream is not opened, it could be that the IP address of the RTSP server is incorrect in which case hit back and change the IP address in the settings. 
+> Note: Ensure that both DJI Smart Controller and GPU Laptop are on the same network. To setup wired network connection between DJI Smart Controller and GPU Laptop see [here](#integrating-with-deepstream-and-controller-script).
 
-10. Launch **Deepstream application** on the GPU Laptop by running the command: ` py dvd.py -i rtsp://localhost:8554/test` 
-11. Takeoff the drone by hitting the [Toggle UI button](#video-activity) then the  [Takeoff button](#video-activity) on screen
-12. Position the drone in desired position using [Virtual Joystick buttons](#video-activity) on screen 
-13. Turn on the command listener on **DJIAAP** by hitting the [Command Listener button](#video-activity)
-14. Launch **Controller Script** on GPU Laptop by running the command: `py receiveamqp3.py` 
-15. Viola! Your drone should be following a drone in the video view! (or at least something else that has been detected)
+8.  Takeoff the drone by hitting the [Toggle UI button](#video-activity) then the  [Takeoff button](#video-activity) 
+9. Launch **Deepstream application** on the GPU Laptop by running the command: ` py dvd.py -i rtsp://localhost:8554/test` 
+10. Position the drone in desired position using [Virtual Joystick buttons](#video-activity)
+11. Turn on the command listener on **DJIAAPP** by hitting the [Command Listener button](#video-activity)
+12. Launch **Controller Script** on GPU Laptop by running the command: `py receiveamqp3.py`
+13. Voila! Your drone should be following a drone in the video view! (or at least something else that has been detected)
 
 ## Architecture
 
@@ -106,62 +105,61 @@ The following diagram illustrates the architecture of the entire system (**DJIAA
 2. **DJIAAPP** streams out the live video feed via RTSP or RTMP to a server on the GPU Laptop
 3. **Deepstream application** on GPU Laptop consumes RTSP stream from server and runs inference,etc.
 4. **Deepstream application** upon inference outputs coordinates of bounding boxes to **Controller Script** running on GPU Laptop
-5. **Controller Script** processes coordinates and sends out movement commands to DJIAAPP to consume
+5. **Controller Script** processes coordinates and sends out movement commands to **DJIAAPP** to consume
 6. **DJIAAPP** consumes movement commands and executes movement commands
 
 ### DJI Android App
 
 **DJIAAPP** follows the Model View ViewModel (MVVM) architecture. It contains only 3 activities namely: Connection, Home and Video. The following images depicts the various activities and provides information on each activity. 
 
-- **Connection Activity**
+#### Connection Activity
+![connection](https://user-images.githubusercontent.com/65152263/170230391-e8ae7ba7-82ca-4d62-8835-6a9f2e961bbb.jpg)
 
-	![connection](https://user-images.githubusercontent.com/65152263/170230391-e8ae7ba7-82ca-4d62-8835-6a9f2e961bbb.jpg)
+This is the landing page of **DJIAAPP** when the user first starts the application. 
 
-	This is the landing page of **DJIAAPP** when the user first starts the application. 
+It establishes connection with DJI's Mobile SDK as well as the DJI Drone. This activity is only opened upon launching the application.  Upon successfully connecting, this activity will not be able to returned to.
 
-	It establishes connection with DJI's Mobile SDK as well as the DJI Drone. This activity is only opened upon launching the application.  Upon successfully connecting, this activity will not be able to returned to.
+> Note: First installation and launch will require internet connection to register DJI SDK.
 
-	> Note: First installation and launch will require internet connection to register DJI SDK.
+#### Home Activity
 
-- **Home Activity**
+![home](https://user-images.githubusercontent.com/65152263/170230455-ae066a61-6807-4986-a0dc-7777862523dc.jpg)
 
-	![home](https://user-images.githubusercontent.com/65152263/170230455-ae066a61-6807-4986-a0dc-7777862523dc.jpg)
+UI Legend:
+1. `Start button` to move to [Video Activity](#video-activity)
+2. `Upload Mission button` to open file browser and select mission to be uploaded
+3. `Settings button` to change certain settings such as RTSP server address, drone speed, etc. 
 
-	UI Legend:
-	1. `Start button` to move to [Video Activity](#video-activity)
-	2. `Upload Mission button` to open file browser and select mission to be uploaded
-	3. `Settings button` to change certain settings such as RTSP server address, drone speed, etc. 
+This is the home page of **DJIAAPP** where users can tune certain settings as well as upload a waypoint mission. 
 
-	This is the home page of **DJIAAPP** where users can tune certain settings as well as upload a waypoint mission. 
+#### Video Activity
 
-- **Video Activity**
+VideoActivity (Untoggled):
 
-	VideoActivity (Untoggled):
+![video1](https://user-images.githubusercontent.com/65152263/170230494-b3b6ffc8-8d89-4871-8e33-e8a93828c521.jpg)
 
-	![video1](https://user-images.githubusercontent.com/65152263/170230494-b3b6ffc8-8d89-4871-8e33-e8a93828c521.jpg)
+VideoActivity (Toggled):
 
-	VideoActivity (Toggled):
+![video2](https://user-images.githubusercontent.com/65152263/170230520-684c2c9a-6ef4-4ebe-8fc6-1308eafc1905.jpg)
 
-	![video2](https://user-images.githubusercontent.com/65152263/170230520-684c2c9a-6ef4-4ebe-8fc6-1308eafc1905.jpg)
+UI Legend:
+1. `Back button` to return to [Home Activity](#home-activity)
+2. `RTSP button` to toggle start/stop of RTSP stream
+3. `Command Listener button` to toggle start/stop of listening to commands from the **Controller Script**
+4. `RTMP button` to toggle start/stop of RTMP stream
+5. `Mission button` to toggle start/stop of executing waypoint mission
+> Note: this button is only present if user has uploaded a mission previously in [Home Activity](#home-activity).
 
-	UI Legend:
-	1. `Back button` to return to [Home Activity](#home-activity)
-	2. `RTSP button` to toggle start/stop of RTSP stream
-	3. `Command Listener button` to toggle start/stop of listening to commands from the **Controller Script**
-	4. `RTMP button` to toggle start/stop of RTMP stream
-	5. `Mission button` to toggle start/stop of executing waypoint mission
-	> Note: this button is only present if user has uploaded a mission previously in [Home Activity](#home-activity).
-	
-	6. `Toggle UI button` to toggle UI
-	7. `Current Mode of Drone` represents the current mode of drone 
-	8. `Altitude and velocity indicators` displays the real time altitude and velocity of drone
-	9. `Virtual joystick buttons` to control movement of drone
-	10. `Land button` for drone to return to home and land
-	11. `Takeoff button` for drone to takeoff 
+6. `Toggle UI button` to toggle UI
+7. `Current Mode of Drone` represents the current mode of drone 
+8. `Altitude and velocity indicators` displays the real time altitude and velocity of drone
+9. `Virtual joystick buttons` to control movement of drone
+10. `Land button` for drone to return to home and land
+11. `Takeoff button` for drone to takeoff 
 
-	This is the main page of **DJIAAPP** where most key features are located in namely live streaming of live video feed and virtual control of drone.
+This is the main page of **DJIAAPP** where most key features are located in namely live streaming of live video feed and virtual control of drone.
 
-	> Note: Both Home and Video activity are only created **once** that means that there is only one instance of each activity every time the application ran. That is both activities are able to switch/toggle between each other without having the need to create a new activity every time.
+> Note: Both Home and Video activity are only created **once** that means that there is only one instance of each activity every time the application ran. That is both activities are able to switch/toggle between each other without having the need to create a new activity every time.
 
 ## Features
 ### Waypoint Mission
@@ -355,7 +353,13 @@ Either control target control manually or generate waypoint missions for it. For
 
 ### Minimizing Latency
 
-Through the use of [adb port forwarding](https://medium.com/@godwinjoseph.k/adb-port-forwarding-and-reversing-d2bc71835d43), the Android device and the GPU Laptop can be setup in such a way where both devices are able to communicate with each other via wired connection. This requires the Android device to be connected to the GPU Laptop via USB-C to USB-A. Therefore, this eliminates the need for mobile hotspots when out on the field. See [djiaapp_init.sh](https://github.com/DvdrepoMain/deepstream-5.1/blob/master/deepstream-yolov4-drone/djiaapp_init.sh).
+Through the use of [adb port forwarding](https://medium.com/@godwinjoseph.k/adb-port-forwarding-and-reversing-d2bc71835d43), the Android device and the GPU Laptop can be setup in such a way where both devices are able to communicate with each other via wired connection. This requires the Android device to be connected to the GPU Laptop via USB-C to USB-A. Therefore, this eliminates the need for mobile hotspots when out on the field. 
+```
+$ sudo adb reverse tcp:8554 tcp:8554 # For RTSP Stream
+$ sudo adb reverse tcp:1935 tcp:1936 # For RTMP Stream
+$ sudo adb reverse tcp:5555 tcp:5555 # For Controller script ZMQ
+$ adb devices
+```
 
 > To explore: It is suspected that the White GPU Laptop has a poor WIFI card resulting in receiving live video streams via RTSP (Mobile hotspot) to be very slow. Therefore, can try using other GPU Laptops to prove this. 
 
@@ -386,7 +390,7 @@ DJI Simulator occasionally bugs out (even occasionally when taking off, it will 
 
 3. Why is DJI SDK not registering during connection?
 
-Ensure that Android device has internet connection during first installation and launch of DJIAAPP and ensure that all permissions are allowed. 
+Ensure that Android device has internet connection during first installation and launch of **DJIAAPP** and ensure that all permissions are allowed. 
 
 **IMPORTANT:** If problem still persists, it could mean the dji sdk api key has expired, to replace create a DJI developer account and register an application to obtain key. After which, replace dji sdk api key in `AndroidManifest` under `com.dji.sdk.API_KEY`.
 
@@ -394,10 +398,10 @@ Ensure that Android device has internet connection during first installation and
 
 There might be occasions where the physical control takes control. Try to send drone on a waypoint mission and see whether virtual joysticks will be able to activate then.
 
-5. What happens if DJIAAPP crashes during flight?
+5. What happens if **DJIAAPP** crashes during flight?
 
 All controls will seize and drone will remain at its position. Physical remote controller might not take control in which case send it back to home and see whether the physical controls is able to be activated. 
 
 6. What happens if drone goes past geo-fencing?
 
-Virtual controls will deactivate and the drone will remain still passing movement controls to the actual remote controller. 
+Virtual controls will deactivate and the drone will remain still, passing movement controls to the actual remote controller. 
