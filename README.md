@@ -344,6 +344,8 @@ Use DJI's simulators to test **DJIAAPP** logic.  Note that different drone model
 
 Using the Unity Simulator's video feed as the **Deepstream application's** input video stream, the **Controller Script** will be able to send movement commands to both the Unity Simulator and the **DJIAAPP** which should see both Unity Simulator's drone moving as well the DJI Simulator's drone moving. 
 
+Use [DJI Bridge App](https://github.com/dji-sdk/Android-Bridge-App) for debugging Android App. You will need 2 Android devices for this to work. This only applies to non-Smart controllers as these controllers will have to be connected to the Android device which then cannot be connected to Android Studio. An alternative will be using Android Debug Bridge wirelessly to debug as well. 
+
 ### Live Testing
 Either control target control manually or generate waypoint missions for it. For target drone waypoint movement, use DJI Pilot for linear waypoint missions. For curved waypoint missions use **DJIAAPP**. Use Google Maps to map out waypoints based on latitude and longitude and then import.
 
