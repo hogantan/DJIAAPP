@@ -128,7 +128,12 @@ It establishes connection with DJI's Mobile SDK as well as the DJI Drone. This a
 UI Legend:
 1. `Start button` to move to [Video Activity](#video-activity)
 2. `Upload Mission button` to open file browser and select mission to be uploaded
-3. `Settings button` to change certain settings such as RTSP server address, drone speed, etc. 
+3. `Settings button` to change certain settings such as:
+	- Controller IP address
+	- RTSP server URL
+	- RTMP server URL
+	- Drone max speed	
+> Note: Controller IP address can only be changed before Video Activity is started. Once Video Activity has started, changing Controller IP address has no effect as the Command Listener has already been initialized.
 
 This is the home page of **DJIAAPP** where users can tune certain settings as well as upload a waypoint mission. 
 
